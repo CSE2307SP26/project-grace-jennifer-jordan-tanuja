@@ -20,7 +20,9 @@ public class MainMenu {
         
         System.out.println("1. Make a deposit");
         System.out.println("2. Exit the app");
+        
 
+        System.out.println("3. View transaction history");
     }
 
     public int getUserSelection(int max) {
@@ -36,6 +38,8 @@ public class MainMenu {
         switch (selection) {
             case 1:
                 performDeposit();
+            case 3: 
+                displayTransactionHistory();
         }
     }
 
@@ -46,6 +50,10 @@ public class MainMenu {
             depositAmount = keyboardInput.nextInt();
         }
         userAccount.deposit(depositAmount);
+    }
+
+    public void displayTransactionHistory() {
+        System.out.println("Transaction history: " + userAccount.getTransactionHistory());
     }
 
     public void run() {
