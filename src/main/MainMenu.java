@@ -2,6 +2,7 @@ package main;
 
 import java.util.HashMap;
 import java.util.Scanner;
+import java.util.Set;
 
 public class MainMenu {
 
@@ -72,6 +73,10 @@ public class MainMenu {
         System.out.println("Successfully created new account with name: " + accountName);
     }
 
+    public Set<String> getAllAccountNames() { // added for testing purposes but can be used in later tasks
+        return allAccounts.keySet();
+    }
+ 
     public void run() {
         int selection = -1;
         while(selection != EXIT_SELECTION) {
