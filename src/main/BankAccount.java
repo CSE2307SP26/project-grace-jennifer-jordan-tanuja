@@ -14,12 +14,25 @@ public class BankAccount {
     }
 
     public void deposit(double amount) {
-        if(amount > 0) {
+        if (amount > 0) {
             this.balance += amount;
             this.transaction_history.add(amount);
         } else {
             throw new IllegalArgumentException();
         }
+    }
+
+    public void withdraw(double amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException();
+        }
+
+        if (amount > this.balance) {
+            throw new IllegalArgumentException();
+        }
+
+        this.balance -= amount;
+        this.transaction_history.add(-amount);
     }
 
     public double getBalance() {
