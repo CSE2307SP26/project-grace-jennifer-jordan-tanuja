@@ -5,8 +5,8 @@ import java.util.Scanner;
 
 public class MainMenu {
 
-    private static final int EXIT_SELECTION = 2;
-    private static final int MAX_SELECTION = 5;
+    private static final int EXIT_SELECTION = 10;
+	  private static final int MAX_SELECTION = 10;
 
     private BankAccount userAccount;
     private HashMap<String, BankAccount> allAccounts;
@@ -25,10 +25,11 @@ public class MainMenu {
         System.out.println("Welcome to the 237 Bank App!");
 
         System.out.println("1. Make a deposit");
-        System.out.println("2. Exit the app");
-
-        System.out.println("4. Create an additional account");
-        System.out.println("5. Close an existing account");
+        System.out.println("2. Withdraw from account");
+        System.out.println("3. Check account balance");
+        System.out.println("5. Create an additional account");
+        System.out.println("6. Close an existing account");
+        System.out.println("10. Exit the app");
     }
 
     public int getUserSelection(int max) {
@@ -45,12 +46,17 @@ public class MainMenu {
             case 1:
                 performDeposit();
                 break;
-            case 4:
-                createAdditionalAccount();
+            case 2:
+                performWithdraw();
+                break;
+            case 3:
+                checkBalance();
                 break;
             case 5:
-                closeExistingAccount();
+                createAdditionalAccount();
                 break;
+            case 6:
+                closeExistingAccount();
         }
     }
 
@@ -102,6 +108,22 @@ public class MainMenu {
         allAccounts.remove(accountName);
         System.out.println("The account names" + accountName + "has been successfully closed");
 
+    public void performWithdraw() {
+        double withdrawAmount = -1;
+        while(withdrawAmount < 0) {
+            System.out.print("How much would you like to withdraw: ");
+            withdrawAmount = keyboardInput.nextInt();
+        }
+        try {
+            userAccount.withdraw(withdrawAmount);
+            System.out.println("Withdrawal successful. Current balance: $" + userAccount.getBalance());
+        } catch (Exception e) {
+            System.out.println("Withdrawal failed.");
+        }
+    }
+
+    public void checkBalance() {
+        System.out.println("Account Balance: $" + userAccount.getBalance());
     }
 
     public void run() {
