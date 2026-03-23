@@ -7,7 +7,7 @@ import java.util.Set;
 public class MainMenu {
 
     private static final int EXIT_SELECTION = 10;
-	  private static final int MAX_SELECTION = 10;
+	private static final int MAX_SELECTION = 10;
 
     private BankAccount userAccount;
     private Scanner keyboardInput;
