@@ -23,16 +23,12 @@ public class BankAccount {
     }
 
     public void withdraw(double amount) {
-        if (amount <= 0) {
+        if(amount < 0 || amount > this.balance) {
             throw new IllegalArgumentException();
+        } else {
+            this.balance -= amount;
+            this.transaction_history.add(-amount);
         }
-
-        if (amount > this.balance) {
-            throw new IllegalArgumentException();
-        }
-
-        this.balance -= amount;
-        this.transaction_history.add(-amount);
     }
 
     public double getBalance() {
