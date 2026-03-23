@@ -23,6 +23,7 @@ public class MainMenuTest {
 
   @Test
     public void testAddingNewAccountValid() {  
+
       String input = "newAccount\n";  // https://stackoverflow.com/questions/31635698/junit-testing-for-user-input-using-scanner
       System.setIn(new ByteArrayInputStream(input.getBytes()));
 

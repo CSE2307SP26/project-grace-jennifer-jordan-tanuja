@@ -7,11 +7,11 @@ import java.util.Set;
 public class MainMenu {
 
     private static final int EXIT_SELECTION = 10;
-	  private static final int MAX_SELECTION = 10;
+	private static final int MAX_SELECTION = 10;
 
     private BankAccount userAccount;
     private Scanner keyboardInput;
-    private HashMap<String, BankAccount> allAccounts;
+    public HashMap<String, BankAccount> allAccounts;
 
     public MainMenu() {
         this.userAccount = new BankAccount();
@@ -20,7 +20,6 @@ public class MainMenu {
         this.allAccounts.put("primary", this.userAccount);
 
         this.keyboardInput = new Scanner(System.in);
-        this.allAccounts = new HashMap<>();
     }
 
     public void displayOptions() {
