@@ -33,12 +33,32 @@ public class BankAdminstratorTest {
     }
 
     @Test
-    public void collectFeesOverBalance() {
+    public void testCollectFeesWithInsufficientAccountBalance() {
         BankAccount testAccount = new BankAccount();
         BankAdministrator admin = new BankAdministrator();
         testAccount.deposit(50);
         admin.collectFees(testAccount, 200);
         assertEquals(-150, testAccount.getBalance(), 0.01);
+    }
+
+    @Test
+    public void testCollectMultipleFees() {
+        BankAccount testAccount = new BankAccount();
+        BankAdministrator admin = new BankAdministrator();
+        testAccount.deposit(50);
+        admin.collectFees(testAccount, 10);
+        admin.collectFees(testAccount, 20);
+        assertEquals(20, testAccount.getBalance(), 0.01);
+    }
+
+    @Test
+    public void testCollectFeesWithNegativeBalance() {
+        BankAccount testAccount = new BankAccount();
+        BankAdministrator admin = new BankAdministrator();
+        testAccount.deposit(10);
+        admin.collectFees(testAccount, 20);
+        admin.collectFees(testAccount, 10);
+        assertEquals(-20, testAccount.getBalance(), 0.01);
     }
 
 }
