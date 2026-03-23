@@ -10,8 +10,8 @@ public class MainMenu {
 	  private static final int MAX_SELECTION = 10;
 
     private BankAccount userAccount;
-    private HashMap<String, BankAccount> allAccounts;
     private Scanner keyboardInput;
+    private HashMap<String, BankAccount> allAccounts;
 
     public MainMenu() {
         this.userAccount = new BankAccount();
@@ -20,16 +20,18 @@ public class MainMenu {
         this.allAccounts.put("primary", this.userAccount);
 
         this.keyboardInput = new Scanner(System.in);
+        this.allAccounts = new HashMap<>();
     }
 
     public void displayOptions() {
         System.out.println("Welcome to the 237 Bank App!");
-
         System.out.println("1. Make a deposit");
         System.out.println("2. Withdraw from account");
         System.out.println("3. Check account balance");
+        System.out.println("4. View transaction history");
         System.out.println("5. Create an additional account");
         System.out.println("6. Close an existing account");
+        System.out.println("7. Tranfer money between accounts");
         System.out.println("10. Exit the app");
     }
 
@@ -53,11 +55,15 @@ public class MainMenu {
             case 3:
                 checkBalance();
                 break;
+            case 4:
+                displayTransactionHistory();
             case 5:
                 createAdditionalAccount();
                 break;
             case 6:
                 closeExistingAccount();
+            case 7:
+                transferBetweenAccounts();
         }
     }
 
@@ -71,6 +77,9 @@ public class MainMenu {
         userAccount.deposit(depositAmount);
     }
 
+    public void displayTransactionHistory() {
+        System.out.println("Transaction history: " + userAccount.getTransactionHistory());
+    }
     // creating new account
     public void createAdditionalAccount() {
         System.out.print("Enter a unique name for your new account: ");
@@ -131,6 +140,34 @@ public class MainMenu {
         System.out.println("Account Balance: $" + userAccount.getBalance());
     }
 
+    public void transferBetweenAccounts() {
+        System.out.print("Enter name of the account you are pulling money from: ");
+        String sourceAccountName = keyboardInput.next();
+
+        if (!allAccounts.containsKey(sourceAccountName)) {
+            System.out.println("Source account does not exist.");
+            return;
+        }
+
+        System.out.print("Enter the name of the account you are depositing money into: ");
+        String destinationAccountName = keyboardInput.next();
+
+        if (!allAccounts.containsKey(destinationAccountName)) {
+            System.out.println("Destination account does not exist.");
+            return;
+        }
+
+        System.out.print("Enter the amount to transfer: ");
+        double amount = keyboardInput.nextDouble();
+        try {
+            allAccounts.get(sourceAccountName).withdraw(amount);
+            allAccounts.get(destinationAccountName).deposit(amount);
+            System.out.println("Transfer successful.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Transfer failed. Make sure the amount is valid and the source account has enough funds.");
+        }
+    }
+      
     public void run() {
         int selection = -1;
         while (selection != EXIT_SELECTION) {
