@@ -7,7 +7,7 @@ import java.util.Set;
 public class MainMenu {
 
     private static final int EXIT_SELECTION = 10;
-	  private static final int MAX_SELECTION = 10;
+    private static final int MAX_SELECTION = 10;
 
     private BankAccount userAccount;
     private HashMap<String, BankAccount> allAccounts;
@@ -88,7 +88,7 @@ public class MainMenu {
     public Set<String> getAllAccountNames() { // added for testing purposes but can be used in later tasks
         return allAccounts.keySet();
     }
- 
+
     // closing existing account
     public void closeExistingAccount() {
         System.out.print("Please enter the name of the account you wish to close:");
@@ -112,10 +112,11 @@ public class MainMenu {
         }
         allAccounts.remove(accountName);
         System.out.println("The account names" + accountName + "has been successfully closed");
+    }
 
     public void performWithdraw() {
         double withdrawAmount = -1;
-        while(withdrawAmount < 0) {
+        while (withdrawAmount < 0) {
             System.out.print("How much would you like to withdraw: ");
             withdrawAmount = keyboardInput.nextInt();
         }
