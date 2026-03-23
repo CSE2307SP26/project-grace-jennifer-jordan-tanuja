@@ -31,6 +31,7 @@ public class MainMenu {
         System.out.println("5. Create an additional account");
         System.out.println("6. Close an existing account");
         System.out.println("7. Transfer money between accounts");
+        System.out.println("8. [Bank Admin] Collect fees");
         System.out.println("10. Exit the app");
     }
 
@@ -65,6 +66,9 @@ public class MainMenu {
                 break;
             case 7:
                 transferBetweenAccounts();
+                break;
+            case 8:
+                adminCollectFees();
                 break;
         }
     }
@@ -169,6 +173,26 @@ public class MainMenu {
             System.out.println("Transfer successful.");
         } catch (IllegalArgumentException e) {
             System.out.println("Transfer failed. Make sure the amount is valid and the source account has enough funds.");
+        }
+    }
+
+    // bank administrator collecting fees from existing account 
+    public void adminCollectFees(){
+        System.out.print("Please enter the name of the account you want to collect fees from: ");
+        String accountName = keyboardInput.next();
+        if (!allAccounts.containsKey(accountName)) {
+            System.out.println("This account does not exist.");
+            return;
+        }
+        System.out.print("Please enter the fee amount: ");
+        try{
+            double fee = keyboardInput.nextDouble();
+            BankAdministrator admin = new BankAdministrator();
+            admin.collectFees(allAccounts.get(accountName), fee);
+            System.out.println("Fee of " + fee + " collected from " + accountName);
+        } catch (Exception e){
+            System.out.println("Invalid fee amount. Fee collection failed.");
+            keyboardInput.nextLine();
         }
     }
 

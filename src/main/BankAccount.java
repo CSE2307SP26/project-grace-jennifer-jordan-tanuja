@@ -31,6 +31,15 @@ public class BankAccount {
         }
     }
 
+     public void adminWithdraw(double amount) {
+        if(amount < 0) {
+            throw new IllegalArgumentException();
+        } else {
+            this.balance -= amount;
+            this.transaction_history.add(-amount);
+        }
+    }
+
     public double getBalance() {
         return this.balance;
     }
