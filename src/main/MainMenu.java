@@ -11,7 +11,7 @@ public class MainMenu {
 
     private BankAccount userAccount;
     private Scanner keyboardInput;
-    public HashMap<String, BankAccount> allAccounts;
+    private HashMap<String, BankAccount> allAccounts;
 
     public MainMenu() {
         this.userAccount = new BankAccount();
