@@ -30,6 +30,6 @@ From our testing, everything works, but we look forward to receiving feedback.
 
 ## What commands are needed to compile and run your code from the command line?
 ./runApp.sh <br><br>
-which contains the commands 
+which contains the commands <br>
 cd src <br>
 javac main/*.java && java main.MainMenu
