@@ -29,5 +29,7 @@ None. We are done with all of our stories!
 From our testing, everything works, but we look forward to receiving feedback.
 
 ## What commands are needed to compile and run your code from the command line?
-cd src
+./runApp.sh <br>
+which contains the commands 
+cd src <br>
 javac main/*.java && java main.MainMenu
