@@ -23,7 +23,11 @@ This is a Java terminal app that simulates a bank. It has features for both cust
 9. A bank adminstrator should be able to add an interest payment to an existing account when necessary. (Jordan)
 
 ## What user stories do you intend to complete next iteration?
+None. We are done with all of our stories!
 
 ## Is there anything that you implemented but doesn't currently work?
+From our testing, everything works, but we look forward to receiving feedback.
 
 ## What commands are needed to compile and run your code from the command line?
+cd src
+javac main/*.java && java main.MainMenu
