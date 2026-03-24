@@ -32,6 +32,7 @@ public class MainMenu {
         System.out.println("6. Close an existing account");
         System.out.println("7. Transfer money between accounts");
         System.out.println("8. [Bank Admin] Collect fees");
+        System.out.println("9. [Bank Admin] Add an interest payment");
         System.out.println("10. Exit the app");
     }
 
@@ -69,6 +70,9 @@ public class MainMenu {
                 break;
             case 8:
                 adminCollectFees();
+                break;
+            case 9:
+                adminInterestPayment();
                 break;
         }
     }
@@ -195,6 +199,27 @@ public class MainMenu {
             keyboardInput.nextLine();
         }
     }
+
+     // bank administrator adding interest payment to existing account
+    public void adminInterestPayment(){
+        System.out.print("Please enter the name of the account you want to add an interest payment to: ");
+        String accountName = keyboardInput.next();
+        if (!allAccounts.containsKey(accountName)) {
+            System.out.println("This account does not exist.");
+            return;
+        }
+        System.out.print("Please enter the interest rate as a percentage: ");
+        try{
+            double percentageRate = keyboardInput.nextDouble();
+            BankAdministrator admin = new BankAdministrator();
+            admin.addInterestPayment(allAccounts.get(accountName), percentageRate);
+            System.out.println("Interest rate payment of " + percentageRate + "% paid to " + accountName);
+        } catch (Exception e){
+            System.out.println("Invalid interest rate. Interest payment failed.");
+            keyboardInput.nextLine();
+        }
+    }
+
 
     public Set<String> getAllAccountNames() { // added for testing purposes but can be used in later tasks
         return allAccounts.keySet();
