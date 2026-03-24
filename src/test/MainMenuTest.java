@@ -1,4 +1,5 @@
 package test;
+
 import org.junit.After;
 import org.junit.jupiter.api.Test;
 
@@ -14,39 +15,40 @@ import java.util.HashSet;
 import main.MainMenu;
 
 public class MainMenuTest {
-  private final PrintStream originalOut = System.out; 
- 
+  private final PrintStream originalOut = System.out;
+
   @After
-  public void restoreStreams() {  // https://stackoverflow.com/questions/1119385/junit-test-for-system-out-println
-      System.setOut(originalOut);
+  public void restoreStreams() { // https://stackoverflow.com/questions/1119385/junit-test-for-system-out-println
+    System.setOut(originalOut);
   }
 
   @Test
-    public void testAddingNewAccountValid() {  
-      String input = "newAccount\n";  // https://stackoverflow.com/questions/31635698/junit-testing-for-user-input-using-scanner
-      System.setIn(new ByteArrayInputStream(input.getBytes()));
+  public void testAddingNewAccountValid() {
 
-      MainMenu menu = new MainMenu();
-      menu.createAdditionalAccount();
+    String input = "newAccount\n"; // https://stackoverflow.com/questions/31635698/junit-testing-for-user-input-using-scanner
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
 
-      assertEquals(new HashSet<>(Arrays.asList("primary", "newAccount")) , menu.getAllAccountNames());
-    }
+    MainMenu menu = new MainMenu();
+    menu.createAdditionalAccount();
 
-    @Test
-    public void testAddingNewAccountInvalidThenValid() {  
-      String input = "primary\nsecondTry";
-      System.setIn(new ByteArrayInputStream(input.getBytes()));
+    assertEquals(new HashSet<>(Arrays.asList("primary", "newAccount")), menu.getAllAccountNames());
+  }
 
-      ByteArrayOutputStream output = new ByteArrayOutputStream();
-      System.setOut(new PrintStream(output));
+  @Test
+  public void testAddingNewAccountInvalidThenValid() {
+    String input = "primary\nsecondTry";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
 
-      MainMenu menu = new MainMenu();
-      menu.createAdditionalAccount();
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
 
-      String printed = output.toString();
-      assertTrue(printed.contains("primary already exists. Enter a unique name for your new account: "));
-      assertTrue(printed.contains("Successfully created new account with name: secondTry"));
+    MainMenu menu = new MainMenu();
+    menu.createAdditionalAccount();
 
-      assertEquals(new HashSet<>(Arrays.asList("primary", "secondTry")) , menu.getAllAccountNames());
-    }
+    String printed = output.toString();
+    assertTrue(printed.contains("primary already exists. Enter a unique name for your new account: "));
+    assertTrue(printed.contains("Successfully created new account with name: secondTry"));
+
+    assertEquals(new HashSet<>(Arrays.asList("primary", "secondTry")), menu.getAllAccountNames());
+  }
 }

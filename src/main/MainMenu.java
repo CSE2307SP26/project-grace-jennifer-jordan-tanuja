@@ -10,8 +10,8 @@ public class MainMenu {
     private static final int MAX_SELECTION = 10;
 
     private BankAccount userAccount;
-    private HashMap<String, BankAccount> allAccounts;
     private Scanner keyboardInput;
+    private HashMap<String, BankAccount> allAccounts;
 
     public MainMenu() {
         this.userAccount = new BankAccount();
@@ -24,12 +24,13 @@ public class MainMenu {
 
     public void displayOptions() {
         System.out.println("Welcome to the 237 Bank App!");
-
         System.out.println("1. Make a deposit");
         System.out.println("2. Withdraw from account");
         System.out.println("3. Check account balance");
+        System.out.println("4. View transaction history");
         System.out.println("5. Create an additional account");
         System.out.println("6. Close an existing account");
+        System.out.println("7. Transfer money between accounts");
         System.out.println("10. Exit the app");
     }
 
@@ -53,11 +54,18 @@ public class MainMenu {
             case 3:
                 checkBalance();
                 break;
+            case 4:
+                displayTransactionHistory();
+                break;
             case 5:
                 createAdditionalAccount();
                 break;
             case 6:
                 closeExistingAccount();
+                break;
+            case 7:
+                transferBetweenAccounts();
+                break;
         }
     }
 
@@ -71,7 +79,32 @@ public class MainMenu {
         userAccount.deposit(depositAmount);
     }
 
-    // creating new account
+    // withdrawing from account
+    public void performWithdraw() {
+        double withdrawAmount = -1;
+        while (withdrawAmount < 0) {
+            System.out.print("How much would you like to withdraw: ");
+            withdrawAmount = keyboardInput.nextInt();
+        }
+        try {
+            userAccount.withdraw(withdrawAmount);
+            System.out.println("Withdrawal successful. Current balance: $" + userAccount.getBalance());
+        } catch (Exception e) {
+            System.out.println("Withdrawal failed.");
+        }
+    }
+
+    // checking account balance
+    public void checkBalance() {
+        System.out.println("Account Balance: $" + userAccount.getBalance());
+    }
+
+    // viewing transaction history
+    public void displayTransactionHistory() {
+        System.out.println("Transaction history: " + userAccount.getTransactionHistory());
+    }
+
+    // creating additional account
     public void createAdditionalAccount() {
         System.out.print("Enter a unique name for your new account: ");
         String accountName = keyboardInput.next();
@@ -83,10 +116,6 @@ public class MainMenu {
 
         allAccounts.put(accountName, new BankAccount());
         System.out.println("Successfully created new account with name: " + accountName);
-    }
-
-    public Set<String> getAllAccountNames() { // added for testing purposes but can be used in later tasks
-        return allAccounts.keySet();
     }
 
     // closing existing account
@@ -107,29 +136,45 @@ public class MainMenu {
         // account must be 0 before closing
         if (allAccounts.get(accountName).getBalance() != 0) {
             System.out.print(
-                    "The account balance must be 0 before closing the account. Please transfer the balance to a differnet account before closing.");
+                    "The account balance must be 0 before closing the account. Please transfer the balance to a different account before closing.");
             return;
         }
         allAccounts.remove(accountName);
-        System.out.println("The account names" + accountName + "has been successfully closed");
+        System.out.println("The account named " + accountName + " has been successfully closed");
     }
 
-    public void performWithdraw() {
-        double withdrawAmount = -1;
-        while (withdrawAmount < 0) {
-            System.out.print("How much would you like to withdraw: ");
-            withdrawAmount = keyboardInput.nextInt();
+    // transferring money between accounts
+    public void transferBetweenAccounts() {
+        System.out.print("Enter name of the account you are pulling money from: ");
+        String sourceAccountName = keyboardInput.next();
+
+        if (!allAccounts.containsKey(sourceAccountName)) {
+            System.out.println("Source account does not exist.");
+            return;
         }
+
+        System.out.print("Enter the name of the account you are depositing money into: ");
+        String destinationAccountName = keyboardInput.next();
+
+        if (!allAccounts.containsKey(destinationAccountName)) {
+            System.out.println("Destination account does not exist.");
+            return;
+        }
+
+        System.out.print("Enter the amount to transfer: ");
+        double amount = keyboardInput.nextDouble();
         try {
-            userAccount.withdraw(withdrawAmount);
-            System.out.println("Withdrawal successful. Current balance: $" + userAccount.getBalance());
-        } catch (Exception e) {
-            System.out.println("Withdrawal failed.");
+            allAccounts.get(sourceAccountName).withdraw(amount);
+            allAccounts.get(destinationAccountName).deposit(amount);
+            System.out.println("Transfer successful.");
+        } catch (IllegalArgumentException e) {
+            System.out
+                    .println("Transfer failed. Make sure the amount is valid and the source account has enough funds.");
         }
     }
 
-    public void checkBalance() {
-        System.out.println("Account Balance: $" + userAccount.getBalance());
+    public Set<String> getAllAccountNames() { // added for testing purposes but can be used in later tasks
+        return allAccounts.keySet();
     }
 
     public void run() {
