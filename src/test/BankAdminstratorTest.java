@@ -61,4 +61,34 @@ public class BankAdminstratorTest {
         assertEquals(-20, testAccount.getBalance(), 0.01);
     }
 
+    @Test
+    public void testInterestPayment() {
+        BankAccount testAccount = new BankAccount();
+        BankAdministrator admin = new BankAdministrator();
+        testAccount.deposit(50);
+        admin.addInterestPayment(testAccount, 10);
+        assertEquals(55, testAccount.getBalance(), 0.01);
+    }
+
+    @Test
+    public void testInvalidInterestPayment() {
+        BankAccount testAccount = new BankAccount();
+        BankAdministrator admin = new BankAdministrator();
+        testAccount.deposit(50);
+        try {
+            admin.addInterestPayment(testAccount, -10);
+            fail();
+        } catch (IllegalArgumentException e) {
+            // do nothing, test passes
+        }
+    }
+
+    @Test
+    public void testInterestPaymentOnZeroBalance() {
+        BankAccount testAccount = new BankAccount();
+        BankAdministrator admin = new BankAdministrator();
+        admin.addInterestPayment(testAccount, 10);
+        assertEquals(0, testAccount.getBalance(), 0.01);
+    }
+
 }
