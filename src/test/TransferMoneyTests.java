@@ -28,7 +28,7 @@ public class TransferMoneyTests {
 
     @Test
     public void testTransferMoneySuccessfully() {
-        String input = "savings\n100\nprimary\nsavings\n40\n";
+        String input = "savings\nprimary\n100\nprimary\nsavings\n40\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
 
         MainMenu menu = new MainMenu();
@@ -90,7 +90,7 @@ public class TransferMoneyTests {
 
     @Test
     public void testTransferFailsWhenAmountIsNegative() {
-        String input = "savings\n100\nprimary\nsavings\n-20\n";
+        String input = "savings\nprimary\n100\nprimary\nsavings\n-20\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
