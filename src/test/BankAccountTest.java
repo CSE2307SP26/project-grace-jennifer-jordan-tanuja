@@ -25,7 +25,7 @@ public class BankAccountTest {
             testAccount.deposit(-50);
             fail();
         } catch (IllegalArgumentException e) {
-            //do nothing, test passes
+            // do nothing, test passes
         }
     }
 
@@ -34,10 +34,10 @@ public class BankAccountTest {
         BankAccount testAccount = new BankAccount();
         testAccount.deposit(50);
         testAccount.withdraw(10);
-        
+
         List<Double> transaction_history = testAccount.getTransactionHistory();
-        double[] expected_transaction_history = {50, -10};
-        
+        double[] expected_transaction_history = { 50, -10 };
+
         for (int i = 0; i < transaction_history.size(); i++) {
             assertEquals(expected_transaction_history[i], transaction_history.get(i), 0.001);
         }

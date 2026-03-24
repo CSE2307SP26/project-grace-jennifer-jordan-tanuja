@@ -25,7 +25,7 @@ public class WithdrawAccountTest {
             testAccount.withdraw(-50);
             fail();
         } catch (IllegalArgumentException e) {
-            //do nothing, test passes
+            // do nothing, test passes
         }
     }
 
@@ -37,7 +37,7 @@ public class WithdrawAccountTest {
             testAccount.withdraw(70);
             fail();
         } catch (IllegalArgumentException e) {
-            //do nothing, test passes
+            // do nothing, test passes
         }
     }
 }

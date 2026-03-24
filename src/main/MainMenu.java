@@ -7,7 +7,7 @@ import java.util.Set;
 public class MainMenu {
 
     private static final int EXIT_SELECTION = 10;
-	private static final int MAX_SELECTION = 10;
+    private static final int MAX_SELECTION = 10;
 
     private BankAccount userAccount;
     private Scanner keyboardInput;
@@ -86,7 +86,7 @@ public class MainMenu {
     // withdrawing from account
     public void performWithdraw() {
         double withdrawAmount = -1;
-        while(withdrawAmount < 0) {
+        while (withdrawAmount < 0) {
             System.out.print("How much would you like to withdraw: ");
             withdrawAmount = keyboardInput.nextInt();
         }
@@ -121,7 +121,7 @@ public class MainMenu {
         allAccounts.put(accountName, new BankAccount());
         System.out.println("Successfully created new account with name: " + accountName);
     }
- 
+
     // closing existing account
     public void closeExistingAccount() {
         System.out.print("Please enter the name of the account you wish to close:");
@@ -140,11 +140,11 @@ public class MainMenu {
         // account must be 0 before closing
         if (allAccounts.get(accountName).getBalance() != 0) {
             System.out.print(
-                    "The account balance must be 0 before closing the account. Please transfer the balance to a differnet account before closing.");
+                    "The account balance must be 0 before closing the account. Please transfer the balance to a different account before closing.");
             return;
         }
         allAccounts.remove(accountName);
-        System.out.println("The account names" + accountName + "has been successfully closed");
+        System.out.println("The account named " + accountName + " has been successfully closed");
     }
 
     // transferring money between accounts
@@ -172,7 +172,8 @@ public class MainMenu {
             allAccounts.get(destinationAccountName).deposit(amount);
             System.out.println("Transfer successful.");
         } catch (IllegalArgumentException e) {
-            System.out.println("Transfer failed. Make sure the amount is valid and the source account has enough funds.");
+            System.out
+                    .println("Transfer failed. Make sure the amount is valid and the source account has enough funds.");
         }
     }
 
@@ -199,7 +200,7 @@ public class MainMenu {
     public Set<String> getAllAccountNames() { // added for testing purposes but can be used in later tasks
         return allAccounts.keySet();
     }
-      
+
     public void run() {
         int selection = -1;
         while (selection != EXIT_SELECTION) {
