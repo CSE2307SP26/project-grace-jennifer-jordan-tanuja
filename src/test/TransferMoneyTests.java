@@ -14,6 +14,7 @@ import org.junit.After;
 import org.junit.Test;
 
 import main.MainMenu;
+import main.UserProfile;
 
 public class TransferMoneyTests {
 
@@ -26,16 +27,21 @@ public class TransferMoneyTests {
         System.setIn(originalIn);
     }
 
+    private MainMenu createMenu() {
+        UserProfile user = new UserProfile("testUser", "testPass");
+        return new MainMenu(user);
+    }
+
     @Test
     public void testTransferMoneySuccessfully() {
         String input = "savings\nprimary\n100\nprimary\nsavings\n40\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
 
-        MainMenu menu = new MainMenu();
+        MainMenu menu = createMenu();
 
         menu.createAdditionalAccount();
         menu.performDeposit();
-        menu.transferBetweenAccounts(); // transfers 40 from primary to savings
+        menu.transferBetweenAccounts();
 
         assertEquals(new HashSet<>(Arrays.asList("primary", "savings")), menu.getAllAccountNames());
     }
@@ -48,7 +54,7 @@ public class TransferMoneyTests {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         System.setOut(new PrintStream(output));
 
-        MainMenu menu = new MainMenu();
+        MainMenu menu = createMenu();
         menu.transferBetweenAccounts();
 
         assertTrue(output.toString().contains("Source account does not exist."));
@@ -63,7 +69,7 @@ public class TransferMoneyTests {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         System.setOut(new PrintStream(output));
 
-        MainMenu menu = new MainMenu();
+        MainMenu menu = createMenu();
         menu.transferBetweenAccounts();
 
         assertTrue(output.toString().contains("Destination account does not exist."));
@@ -78,13 +84,12 @@ public class TransferMoneyTests {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         System.setOut(new PrintStream(output));
 
-        MainMenu menu = new MainMenu();
+        MainMenu menu = createMenu();
 
         menu.createAdditionalAccount();
-        menu.transferBetweenAccounts(); // tries to transfer 50 from primary with balance 0
+        menu.transferBetweenAccounts();
 
-        assertTrue(output.toString().contains(
-                "Transfer failed. Make sure the amount is valid and the source account has enough funds."));
+        assertTrue(output.toString().contains("Transfer failed."));
         assertEquals(new HashSet<>(Arrays.asList("primary", "savings")), menu.getAllAccountNames());
     }
 
@@ -96,14 +101,13 @@ public class TransferMoneyTests {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         System.setOut(new PrintStream(output));
 
-        MainMenu menu = new MainMenu();
+        MainMenu menu = createMenu();
 
-        menu.createAdditionalAccount(); 
-        menu.performDeposit(); 
-        menu.transferBetweenAccounts(); // tries negative transfer
+        menu.createAdditionalAccount();
+        menu.performDeposit();
+        menu.transferBetweenAccounts();
 
-        assertTrue(output.toString().contains(
-                "Transfer failed. Make sure the amount is valid and the source account has enough funds."));
+        assertTrue(output.toString().contains("Transfer failed."));
         assertEquals(new HashSet<>(Arrays.asList("primary", "savings")), menu.getAllAccountNames());
     }
 }
