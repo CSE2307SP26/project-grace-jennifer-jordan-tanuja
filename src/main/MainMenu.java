@@ -21,6 +21,7 @@ public class MainMenu {
 
     public void displayOptions() {
         System.out.println("Logged in as: " + this.currentUser.getUsername());
+        System.out.println("Note: Your default account is named 'primary' and is a checking account.");
         System.out.println("What do you wish to do today?");
         System.out.println("1. Make a deposit");
         System.out.println("2. Withdraw from account");
@@ -54,6 +55,10 @@ public class MainMenu {
         }
 
         return selection;
+    }
+
+    public HashMap<String, BankAccount> getAccounts() {
+        return this.allAccounts;
     }
 
     public void processInput(int selection) {
@@ -128,7 +133,7 @@ public class MainMenu {
             allAccounts.get(accountName).withdraw(withdrawAmount);
             System.out.println("Withdrawal successful.");
         } catch (IllegalArgumentException e) {
-            System.out.println("Withdrawal failed.");
+            System.out.println("Invaild Withdrawl amount. Withdrawal failed.");
         }
     }
 
@@ -141,7 +146,9 @@ public class MainMenu {
             return;
         }
 
-        System.out.println("Account Balance: $" + allAccounts.get(accountName).getBalance());
+        BankAccount account = allAccounts.get(accountName);
+        // should show account type now too
+        System.out.println(account.getAccountType() + " account balance: $" + account.getBalance());
     }
 
     public void displayTransactionHistory() {
@@ -165,8 +172,25 @@ public class MainMenu {
             accountName = keyboardInput.next();
         }
 
-        allAccounts.put(accountName, new BankAccount());
-        System.out.println("Successfully created new account with name: " + accountName);
+        System.out.print("Enter the account type (savings, checking, or credit): ");
+        String accountType = keyboardInput.next().toLowerCase();
+
+        while (!accountType.equals("savings")
+                && !accountType.equals("checking")
+                && !accountType.equals("credit")) {
+            System.out.print("Invalid account type. Please enter savings, checking, or credit: ");
+            accountType = keyboardInput.next().toLowerCase();
+        }
+
+        if (accountType.equals("savings")) {
+            allAccounts.put(accountName, new BankAccount("savings"));
+        } else if (accountType.equals("checking")) {
+            allAccounts.put(accountName, new BankAccount("checking"));
+        } else {
+            allAccounts.put(accountName, new BankAccount("credit"));
+        }
+
+        System.out.println("Successfully created new " + accountType + " account with name: " + accountName);
     }
 
     public void closeExistingAccount() {
@@ -217,7 +241,8 @@ public class MainMenu {
             allAccounts.get(destinationAccountName).deposit(amount);
             System.out.println("Transfer successful.");
         } catch (IllegalArgumentException e) {
-            System.out.println("Transfer failed.");
+            System.out
+                    .println("Transfer failed. Make sure the amount is valid and the source account has enough funds.");
         }
     }
 
