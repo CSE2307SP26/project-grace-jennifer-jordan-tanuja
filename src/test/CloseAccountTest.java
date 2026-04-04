@@ -1,26 +1,35 @@
 package test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
+import org.junit.After;
+import org.junit.Test;
 
 import main.MainMenu;
+import main.UserProfile;
 
 public class CloseAccountTest {
 
     private final PrintStream originalOut = System.out;
+    private final InputStream originalIn = System.in;
 
-    @AfterEach
+    @After
     public void restoreStreams() {
         System.setOut(originalOut);
+        System.setIn(originalIn);
+    }
+
+    private MainMenu createMenu() {
+        UserProfile user = new UserProfile("testUser", "testPass");
+        return new MainMenu(user);
     }
 
     @Test
@@ -28,7 +37,7 @@ public class CloseAccountTest {
         String input = "savings\nsavings\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
 
-        MainMenu menu = new MainMenu();
+        MainMenu menu = createMenu();
         menu.createAdditionalAccount();
         menu.closeExistingAccount();
 
@@ -43,8 +52,9 @@ public class CloseAccountTest {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         System.setOut(new PrintStream(output));
 
-        MainMenu menu = new MainMenu();
+        MainMenu menu = createMenu();
         menu.closeExistingAccount();
+
         assertTrue(output.toString().contains("That account does not exist."));
         assertEquals(new HashSet<>(Arrays.asList("primary")), menu.getAllAccountNames());
     }
@@ -57,10 +67,10 @@ public class CloseAccountTest {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         System.setOut(new PrintStream(output));
 
-        MainMenu menu = new MainMenu();
+        MainMenu menu = createMenu();
         menu.closeExistingAccount();
 
-        assertTrue(output.toString().contains("This is the primary account, which cannot be closed."));
+        assertTrue(output.toString().contains("The primary account cannot be closed."));
         assertEquals(new HashSet<>(Arrays.asList("primary")), menu.getAllAccountNames());
     }
 
@@ -72,7 +82,7 @@ public class CloseAccountTest {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         System.setOut(new PrintStream(output));
 
-        MainMenu menu = new MainMenu();
+        MainMenu menu = createMenu();
 
         menu.createAdditionalAccount();
         menu.performDeposit();

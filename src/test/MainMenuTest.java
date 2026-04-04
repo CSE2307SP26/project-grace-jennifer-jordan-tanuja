@@ -1,34 +1,43 @@
 package test;
 
-import org.junit.After;
-import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import org.junit.After;
+import org.junit.Test;
+
 import main.MainMenu;
+import main.UserProfile;
 
 public class MainMenuTest {
+
   private final PrintStream originalOut = System.out;
+  private final InputStream originalIn = System.in;
 
   @After
-  public void restoreStreams() { // https://stackoverflow.com/questions/1119385/junit-test-for-system-out-println
+  public void restoreStreams() {
     System.setOut(originalOut);
+    System.setIn(originalIn);
+  }
+
+  private MainMenu createMenu() {
+    UserProfile user = new UserProfile("testUser", "testPass");
+    return new MainMenu(user);
   }
 
   @Test
   public void testAddingNewAccountValid() {
-
-    String input = "newAccount\n"; // https://stackoverflow.com/questions/31635698/junit-testing-for-user-input-using-scanner
+    String input = "newAccount\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
-    MainMenu menu = new MainMenu();
+    MainMenu menu = createMenu();
     menu.createAdditionalAccount();
 
     assertEquals(new HashSet<>(Arrays.asList("primary", "newAccount")), menu.getAllAccountNames());
@@ -36,13 +45,13 @@ public class MainMenuTest {
 
   @Test
   public void testAddingNewAccountInvalidThenValid() {
-    String input = "primary\nsecondTry";
+    String input = "primary\nsecondTry\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     System.setOut(new PrintStream(output));
 
-    MainMenu menu = new MainMenu();
+    MainMenu menu = createMenu();
     menu.createAdditionalAccount();
 
     String printed = output.toString();
