@@ -11,7 +11,7 @@ public class WithdrawAccountTest {
 
     @Test
     public void testWithdraw() {
-        BankAccount testAccount = new BankAccount();
+        BankAccount testAccount = new BankAccount("checking");
         testAccount.deposit(100);
         testAccount.withdraw(30);
         assertEquals(70, testAccount.getBalance(), 0.01);
@@ -19,7 +19,7 @@ public class WithdrawAccountTest {
 
     @Test
     public void testInvalidWithdraw() {
-        BankAccount testAccount = new BankAccount();
+        BankAccount testAccount = new BankAccount("checking");
         testAccount.deposit(100);
         try {
             testAccount.withdraw(-50);
@@ -31,7 +31,7 @@ public class WithdrawAccountTest {
 
     @Test
     public void testOverdraw() {
-        BankAccount testAccount = new BankAccount();
+        BankAccount testAccount = new BankAccount("checking");
         testAccount.deposit(60);
         try {
             testAccount.withdraw(70);

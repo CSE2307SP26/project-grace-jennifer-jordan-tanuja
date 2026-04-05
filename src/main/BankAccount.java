@@ -7,10 +7,12 @@ public class BankAccount {
 
     private double balance;
     private List<Double> transaction_history;
+    private String account_type;
 
-    public BankAccount() {
+    public BankAccount(String account_type) {
         this.balance = 0;
         this.transaction_history = new ArrayList<Double>();
+        this.account_type = account_type;
     }
 
     public void deposit(double amount) {
@@ -23,7 +25,7 @@ public class BankAccount {
     }
 
     public void withdraw(double amount) {
-        if(amount < 0 || amount > this.balance) {
+        if (amount < 0 || amount > this.balance) {
             throw new IllegalArgumentException();
         } else {
             this.balance -= amount;
@@ -31,8 +33,8 @@ public class BankAccount {
         }
     }
 
-     public void adminWithdraw(double amount) {
-        if(amount < 0) {
+    public void adminWithdraw(double amount) {
+        if (amount < 0) {
             throw new IllegalArgumentException();
         } else {
             this.balance -= amount;
@@ -46,5 +48,9 @@ public class BankAccount {
 
     public List<Double> getTransactionHistory() {
         return this.transaction_history;
+    }
+
+    public String getAccountType() {
+        return this.account_type;
     }
 }

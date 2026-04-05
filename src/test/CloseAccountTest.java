@@ -34,7 +34,7 @@ public class CloseAccountTest {
 
     @Test
     public void testCloseExistingAccountSuccessfully() {
-        String input = "savings\nsavings\n";
+        String input = "savings\nsavings\nsavings\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
 
         MainMenu menu = createMenu();
@@ -76,7 +76,7 @@ public class CloseAccountTest {
 
     @Test
     public void testCannotCloseAccountWithNonZeroBalance() {
-        String input = "savings\nprimary\n50\nprimary\nsavings\n50\nsavings\n";
+        String input = "savings\nsavings\nprimary\n50\nprimary\nsavings\n50\nsavings\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();

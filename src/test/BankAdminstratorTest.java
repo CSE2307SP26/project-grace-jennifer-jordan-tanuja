@@ -12,7 +12,7 @@ public class BankAdminstratorTest {
 
     @Test
     public void testCollectFees() {
-        BankAccount testAccount = new BankAccount();
+        BankAccount testAccount = new BankAccount("checking");
         BankAdministrator admin = new BankAdministrator();
         testAccount.deposit(50);
         admin.collectFees(testAccount, 10);
@@ -21,7 +21,7 @@ public class BankAdminstratorTest {
 
     @Test
     public void testInvalidCollectFees() {
-        BankAccount testAccount = new BankAccount();
+        BankAccount testAccount = new BankAccount("checking");
         BankAdministrator admin = new BankAdministrator();
         testAccount.deposit(50);
         try {
@@ -34,7 +34,7 @@ public class BankAdminstratorTest {
 
     @Test
     public void testCollectFeesWithInsufficientAccountBalance() {
-        BankAccount testAccount = new BankAccount();
+        BankAccount testAccount = new BankAccount("checking");
         BankAdministrator admin = new BankAdministrator();
         testAccount.deposit(50);
         admin.collectFees(testAccount, 200);
@@ -43,7 +43,7 @@ public class BankAdminstratorTest {
 
     @Test
     public void testCollectMultipleFees() {
-        BankAccount testAccount = new BankAccount();
+        BankAccount testAccount = new BankAccount("checking");
         BankAdministrator admin = new BankAdministrator();
         testAccount.deposit(50);
         admin.collectFees(testAccount, 10);
@@ -53,7 +53,7 @@ public class BankAdminstratorTest {
 
     @Test
     public void testCollectFeesWithNegativeBalance() {
-        BankAccount testAccount = new BankAccount();
+        BankAccount testAccount = new BankAccount("checking");
         BankAdministrator admin = new BankAdministrator();
         testAccount.deposit(10);
         admin.collectFees(testAccount, 20);
@@ -63,7 +63,7 @@ public class BankAdminstratorTest {
 
     @Test
     public void testInterestPayment() {
-        BankAccount testAccount = new BankAccount();
+        BankAccount testAccount = new BankAccount("checking");
         BankAdministrator admin = new BankAdministrator();
         testAccount.deposit(50);
         admin.addInterestPayment(testAccount, 10);
@@ -72,7 +72,7 @@ public class BankAdminstratorTest {
 
     @Test
     public void testInvalidInterestPayment() {
-        BankAccount testAccount = new BankAccount();
+        BankAccount testAccount = new BankAccount("checking");
         BankAdministrator admin = new BankAdministrator();
         testAccount.deposit(50);
         try {
@@ -85,7 +85,7 @@ public class BankAdminstratorTest {
 
     @Test
     public void testInterestPaymentOnZeroBalance() {
-        BankAccount testAccount = new BankAccount();
+        BankAccount testAccount = new BankAccount("checking");
         BankAdministrator admin = new BankAdministrator();
         admin.addInterestPayment(testAccount, 10);
         assertEquals(0, testAccount.getBalance(), 0.01);

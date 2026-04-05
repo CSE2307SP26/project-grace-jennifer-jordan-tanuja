@@ -13,7 +13,7 @@ public class UserProfile {
         this.username = username;
         this.password = password;
         this.accounts = new HashMap<>();
-        this.accounts.put("primary", new BankAccount());
+        this.accounts.put("primary", new BankAccount("checking"));
     }
 
     public String getUsername() {

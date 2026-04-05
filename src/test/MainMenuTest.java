@@ -33,8 +33,8 @@ public class MainMenuTest {
   }
 
   @Test
-  public void testAddingNewAccountValid() {
-    String input = "newAccount\n";
+  public void testAddingNewSavingsAccountValid() {
+    String input = "newAccount\nsavings\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
     MainMenu menu = createMenu();
@@ -44,8 +44,8 @@ public class MainMenuTest {
   }
 
   @Test
-  public void testAddingNewAccountInvalidThenValid() {
-    String input = "primary\nsecondTry\n";
+  public void testAddingNewAccountInvalidNameThenValid() {
+    String input = "primary\nsecondTry\nchecking\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
     ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -56,8 +56,52 @@ public class MainMenuTest {
 
     String printed = output.toString();
     assertTrue(printed.contains("primary already exists. Enter a unique name for your new account: "));
-    assertTrue(printed.contains("Successfully created new account with name: secondTry"));
+    assertTrue(printed.contains("Successfully created new checking account with name: secondTry"));
 
     assertEquals(new HashSet<>(Arrays.asList("primary", "secondTry")), menu.getAllAccountNames());
   }
+
+  @Test
+  public void testAddingNewAccountInvalidTypeThenValid() {
+    String input = "vacationFund\nbanana\nsavings\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+    menu.createAdditionalAccount();
+
+    String printed = output.toString();
+    assertTrue(printed.contains("Invalid account type. Please enter savings, checking, or credit: "));
+    assertTrue(printed.contains("Successfully created new savings account with name: vacationFund"));
+
+    assertEquals(new HashSet<>(Arrays.asList("primary", "vacationFund")), menu.getAllAccountNames());
+  }
+
+  // account type tests
+  @Test
+  public void testCreateSavingsAccountType() {
+    String input = "vacationFund\nsavings\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    MainMenu menu = createMenu();
+    menu.createAdditionalAccount();
+
+    assertEquals("savings",
+        menu.getAccounts().get("vacationFund").getAccountType());
+  }
+
+  @Test
+  public void testInvalidAccountTypeThenValid() {
+    String input = "trip\nbanana\nsavings\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    MainMenu menu = createMenu();
+    menu.createAdditionalAccount();
+
+    assertEquals("savings",
+        menu.getAccounts().get("trip").getAccountType());
+  }
+
 }
