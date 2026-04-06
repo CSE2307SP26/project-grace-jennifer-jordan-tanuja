@@ -133,7 +133,7 @@ public class MainMenu {
             allAccounts.get(accountName).withdraw(withdrawAmount);
             System.out.println("Withdrawal successful.");
         } catch (IllegalArgumentException e) {
-            System.out.println("Invaild Withdrawl amount. Withdrawal failed.");
+            System.out.println("Invaild withdrawal amount. Withdrawal failed.");
         }
     }
 
