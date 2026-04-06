@@ -9,18 +9,20 @@ import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
+
 public class BankAccountTest {
+    String pin = "000000";
 
     @Test
     public void testDeposit() {
-        BankAccount testAccount = new BankAccount("checking");
+        BankAccount testAccount = new BankAccount("checking", pin);
         testAccount.deposit(50);
         assertEquals(50, testAccount.getBalance(), 0.01);
     }
 
     @Test
     public void testInvalidDeposit() {
-        BankAccount testAccount = new BankAccount("checking");
+        BankAccount testAccount = new BankAccount("checking", pin);
         try {
             testAccount.deposit(-50);
             fail();
@@ -31,7 +33,7 @@ public class BankAccountTest {
 
     @Test
     public void testTransactionHistory() {
-        BankAccount testAccount = new BankAccount("checking");
+        BankAccount testAccount = new BankAccount("checking", pin);
         testAccount.deposit(50);
         testAccount.withdraw(10);
 

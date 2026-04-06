@@ -57,7 +57,15 @@ public class StartupPage {
         System.out.print("Enter a password: ");
         String password = keyboardInput.next();
 
-        UserProfile newUser = new UserProfile(username, password);
+        System.out.print("Enter a 6 digit pin number for your primary account: ");
+        String pin = keyboardInput.next();
+
+        while (pin.length() != 6 || !pin.matches("\\d{6}")) {
+            System.out.print("Pin number must have 6 numerical digits. Enter a valid pin number: ");
+            pin = keyboardInput.next();
+        }
+
+        UserProfile newUser = new UserProfile(username, password, pin);
         users.put(username, newUser);
 
         System.out.println("Account created successfully.");

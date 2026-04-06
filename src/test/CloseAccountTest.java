@@ -28,13 +28,13 @@ public class CloseAccountTest {
     }
 
     private MainMenu createMenu() {
-        UserProfile user = new UserProfile("testUser", "testPass");
+        UserProfile user = new UserProfile("testUser", "testPass", "000000");
         return new MainMenu(user);
     }
 
     @Test
     public void testCloseExistingAccountSuccessfully() {
-        String input = "savings\nsavings\nsavings\n";
+        String input = "savings\nsavings\n000000\nsavings\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
 
         MainMenu menu = createMenu();
@@ -76,7 +76,7 @@ public class CloseAccountTest {
 
     @Test
     public void testCannotCloseAccountWithNonZeroBalance() {
-        String input = "savings\nsavings\nprimary\n50\nprimary\nsavings\n50\nsavings\n";
+        String input = "savings\nsavings\n000000\nprimary\n50\nprimary\nsavings\n50\nsavings\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();

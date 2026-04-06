@@ -6,4 +6,4 @@ cd src
 
 javac main/*.java
 
-java main/MainMenu
+java main/StartupPage

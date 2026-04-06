@@ -10,7 +10,7 @@ public class CheckAccountBalanceTest {
 
     @Test
     public void testCheckBalance() {
-        BankAccount testAccount = new BankAccount("checking");
+        BankAccount testAccount = new BankAccount("checking", "000000");
         assertEquals(0, testAccount.getBalance(), 0.01);
 
         testAccount.deposit(125);

@@ -163,6 +163,17 @@ public class MainMenu {
         System.out.println("Transaction history: " + allAccounts.get(accountName).getTransactionHistory());
     }
 
+    private String promptToCreatePinNumber() {
+        System.out.print("Enter a 6 digit pin number for your new account: ");
+        String pin = keyboardInput.next();
+
+        while (pin.length() != 6 || !pin.matches("\\d{6}")) {
+            System.out.print("Pin number must have 6 numerical digits. Enter a valid pin number: ");
+            pin = keyboardInput.next();
+        }
+        return pin;
+    }
+
     public void createAdditionalAccount() {
         System.out.print("Enter a unique name for your new account: ");
         String accountName = keyboardInput.next();
@@ -182,13 +193,8 @@ public class MainMenu {
             accountType = keyboardInput.next().toLowerCase();
         }
 
-        if (accountType.equals("savings")) {
-            allAccounts.put(accountName, new BankAccount("savings"));
-        } else if (accountType.equals("checking")) {
-            allAccounts.put(accountName, new BankAccount("checking"));
-        } else {
-            allAccounts.put(accountName, new BankAccount("credit"));
-        }
+        String pin = promptToCreatePinNumber();
+        allAccounts.put(accountName, new BankAccount(accountType, pin));
 
         System.out.println("Successfully created new " + accountType + " account with name: " + accountName);
     }
