@@ -9,11 +9,11 @@ public class UserProfile {
     private String password;
     private HashMap<String, BankAccount> accounts;
 
-    public UserProfile(String username, String password) {
+    public UserProfile(String username, String password, String primaryPin) {
         this.username = username;
         this.password = password;
         this.accounts = new HashMap<>();
-        this.accounts.put("primary", new BankAccount("checking"));
+        this.accounts.put("primary", new BankAccount("checking", primaryPin));
     }
 
     public String getUsername() {

@@ -8,11 +8,13 @@ public class BankAccount {
     private double balance;
     private List<Double> transaction_history;
     private String account_type;
+    private String pin;
 
-    public BankAccount(String account_type) {
+    public BankAccount(String account_type, String pin) {
         this.balance = 0;
         this.transaction_history = new ArrayList<Double>();
         this.account_type = account_type;
+        this.pin = pin;
     }
 
     public void deposit(double amount) {

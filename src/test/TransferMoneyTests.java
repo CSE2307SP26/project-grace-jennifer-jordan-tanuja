@@ -28,13 +28,13 @@ public class TransferMoneyTests {
     }
 
     private MainMenu createMenu() {
-        UserProfile user = new UserProfile("testUser", "testPass");
+        UserProfile user = new UserProfile("testUser", "testPass", "000000");
         return new MainMenu(user);
     }
 
     @Test
     public void testTransferMoneySuccessfully() {
-        String input = "savings\nsavings\nprimary\n100\nprimary\nsavings\n40\n";
+        String input = "savings\nsavings\n000000\nprimary\n100\nprimary\nsavings\n40\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
 
         MainMenu menu = createMenu();
@@ -78,7 +78,7 @@ public class TransferMoneyTests {
 
     @Test
     public void testTransferFailsWhenInsufficientFunds() {
-        String input = "savings\nsavings\nprimary\nsavings\n50\n";
+        String input = "savings\nsavings\n000000\nprimary\nsavings\n50\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -95,7 +95,7 @@ public class TransferMoneyTests {
 
     @Test
     public void testTransferFailsWhenAmountIsNegative() {
-        String input = "savings\nsavings\nprimary\n100\nprimary\nsavings\n-20\n";
+        String input = "savings\nsavings\n000000\nprimary\n100\nprimary\nsavings\n-20\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();

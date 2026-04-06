@@ -28,13 +28,13 @@ public class MainMenuTest {
   }
 
   private MainMenu createMenu() {
-    UserProfile user = new UserProfile("testUser", "testPass");
+    UserProfile user = new UserProfile("testUser", "testPass", "000000");
     return new MainMenu(user);
   }
 
   @Test
   public void testAddingNewSavingsAccountValid() {
-    String input = "newAccount\nsavings\n";
+    String input = "newAccount\nsavings\n000000\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
     MainMenu menu = createMenu();
@@ -45,7 +45,7 @@ public class MainMenuTest {
 
   @Test
   public void testAddingNewAccountInvalidNameThenValid() {
-    String input = "primary\nsecondTry\nchecking\n";
+    String input = "primary\nsecondTry\nchecking\n000000\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
     ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -63,7 +63,7 @@ public class MainMenuTest {
 
   @Test
   public void testAddingNewAccountInvalidTypeThenValid() {
-    String input = "vacationFund\nbanana\nsavings\n";
+    String input = "vacationFund\nbanana\nsavings\n000000\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
     ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -82,7 +82,7 @@ public class MainMenuTest {
   // account type tests
   @Test
   public void testCreateSavingsAccountType() {
-    String input = "vacationFund\nsavings\n";
+    String input = "vacationFund\nsavings\n000000\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
     MainMenu menu = createMenu();
@@ -94,7 +94,7 @@ public class MainMenuTest {
 
   @Test
   public void testInvalidAccountTypeThenValid() {
-    String input = "trip\nbanana\nsavings\n";
+    String input = "trip\nbanana\nsavings\n000000\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
     MainMenu menu = createMenu();
