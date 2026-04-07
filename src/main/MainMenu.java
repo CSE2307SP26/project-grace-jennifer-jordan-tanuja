@@ -175,6 +175,20 @@ public class MainMenu {
     }
 
     public void createAdditionalAccount() {
+        System.out.print("Please enter your full name: ");
+        String fullName = keyboardInput.nextLine();
+        if (fullName.trim().isEmpty()) {
+            fullName = keyboardInput.nextLine();
+        }
+
+        System.out.print("Please enter your date of birth (MM/DD/YYYY): ");
+        String dob = keyboardInput.next();
+
+        if (!dob.equals(currentUser.getDob())) {
+            System.out.println("Date of birth does not match our records. Account creation failed.");
+            return;
+        }
+
         System.out.print("Enter a unique name for your new account: ");
         String accountName = keyboardInput.next();
 
