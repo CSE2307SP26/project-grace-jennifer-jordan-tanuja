@@ -120,34 +120,142 @@ public class MainMenuTest {
   }
 
   @Test
-  public void testChangingPinSuccess() {
-    String input = "primary\n01/01/1990\n000000\n";
+  public void testCloseExistingAccountSuccessfully() {
+    String input = "John Doe\n01/01/1990\nsavings\nsavings\n000000\nsavings\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
-    ByteArrayOutputStream output = new ByteArrayOutputStream();
-    System.setOut(new PrintStream(output));
-
     MainMenu menu = createMenu();
-    menu.changePinNumber();
+    menu.createAdditionalAccount();
+    menu.closeExistingAccount();
 
-    assertTrue(output.toString().contains("Successfully changed pin number for account primary."));
     assertEquals(new HashSet<>(Arrays.asList("primary")), menu.getAllAccountNames());
   }
-
 
   @Test
-  public void testChangingPinFail() {
-    String input = "primary\n12/31/1999\n000000\n";
+  public void testCloseNonexistentAccount() {
+    String input = "fakeAccount\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
     ByteArrayOutputStream output = new ByteArrayOutputStream();
     System.setOut(new PrintStream(output));
 
     MainMenu menu = createMenu();
-    menu.changePinNumber();
+    menu.closeExistingAccount();
 
-    assertTrue(output.toString().contains("Date of birth does not match our records. Failed to change pin number."));
+    assertTrue(output.toString().contains("That account does not exist."));
     assertEquals(new HashSet<>(Arrays.asList("primary")), menu.getAllAccountNames());
   }
 
+  @Test
+  public void testCannotClosePrimaryAccount() {
+    String input = "primary\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+    menu.closeExistingAccount();
+
+    assertTrue(output.toString().contains("The primary account cannot be closed."));
+    assertEquals(new HashSet<>(Arrays.asList("primary")), menu.getAllAccountNames());
+  }
+
+  @Test
+  public void testCannotCloseAccountWithNonZeroBalance() {
+    String input = "John Doe\n01/01/1990\nsavings\nsavings\n000000\nprimary\nsavings\n50\nsavings\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+
+    menu.createAdditionalAccount();
+    menu.getAccounts().get("primary").deposit(50);
+    menu.transferBetweenAccounts();
+    menu.closeExistingAccount();
+
+    assertTrue(output.toString().contains("The account balance must be 0 before closing the account."));
+    assertEquals(new HashSet<>(Arrays.asList("primary", "savings")), menu.getAllAccountNames());
+  }
+
+  @Test
+  public void testTransferMoneySuccessfully() {
+    String input = "John Doe\n01/01/1990\nsavings\nsavings\n000000\nprimary\nsavings\n40\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    MainMenu menu = createMenu();
+
+    menu.createAdditionalAccount();
+    menu.getAccounts().get("primary").deposit(100);
+    menu.transferBetweenAccounts();
+
+    assertEquals(new HashSet<>(Arrays.asList("primary", "savings")), menu.getAllAccountNames());
+  }
+
+  @Test
+  public void testTransferFailsWhenSourceAccountDoesNotExist() {
+    String input = "fake\nprimary\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+    menu.transferBetweenAccounts();
+
+    assertTrue(output.toString().contains("Source account does not exist."));
+    assertEquals(new HashSet<>(Arrays.asList("primary")), menu.getAllAccountNames());
+  }
+
+  @Test
+  public void testTransferFailsWhenDestinationAccountDoesNotExist() {
+    String input = "primary\nfake\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+    menu.transferBetweenAccounts();
+
+    assertTrue(output.toString().contains("Destination account does not exist."));
+    assertEquals(new HashSet<>(Arrays.asList("primary")), menu.getAllAccountNames());
+  }
+
+  @Test
+  public void testTransferFailsWhenInsufficientFunds() {
+    String input = "John Doe\n01/01/1990\nsavings\nsavings\n000000\nprimary\nsavings\n50\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+
+    menu.createAdditionalAccount();
+    menu.transferBetweenAccounts();
+
+    assertTrue(output.toString().contains("Transfer failed."));
+    assertEquals(new HashSet<>(Arrays.asList("primary", "savings")), menu.getAllAccountNames());
+  }
+
+  @Test
+  public void testTransferFailsWhenAmountIsNegative() {
+    String input = "John Doe\n01/01/1990\nsavings\nsavings\n000000\nprimary\nsavings\n-20\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+
+    menu.createAdditionalAccount();
+    menu.getAccounts().get("primary").deposit(100);
+    menu.transferBetweenAccounts();
+
+    assertTrue(output.toString().contains("Transfer failed."));
+    assertEquals(new HashSet<>(Arrays.asList("primary", "savings")), menu.getAllAccountNames());
+  }
 }

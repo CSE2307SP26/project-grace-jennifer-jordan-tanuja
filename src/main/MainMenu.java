@@ -3,11 +3,12 @@ package main;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.Map;
 
 public class MainMenu {
 
-    private static final int EXIT_SELECTION = 11;
-    private static final int MAX_SELECTION = 11;
+    private static final int EXIT_SELECTION = 7;
+    private static final int MAX_SELECTION = 7;
 
     private UserProfile currentUser;
     private HashMap<String, BankAccount> allAccounts;
@@ -23,17 +24,13 @@ public class MainMenu {
         System.out.println("Logged in as: " + this.currentUser.getUsername());
         System.out.println("Note: Your default account is named 'primary' and is a checking account.");
         System.out.println("What do you wish to do today?");
-        System.out.println("1. Make a deposit");
-        System.out.println("2. Withdraw from account");
-        System.out.println("3. Check account balance");
-        System.out.println("4. View transaction history");
-        System.out.println("5. Change pin number for an account");
-        System.out.println("6. Create an additional account");
-        System.out.println("7. Close an existing account");
-        System.out.println("8. Transfer money from one account to another");
-        System.out.println("9. [Bank Admin] Collect fees");
-        System.out.println("10. [Bank Admin] Add an interest payment");
-        System.out.println("11. Exit");
+        System.out.println("1. Select an account");
+        System.out.println("2. Create an additional account");
+        System.out.println("3. Close an existing account");
+        System.out.println("4. Transfer money from one account to another");
+        System.out.println("5. [Bank Admin] Collect fees");
+        System.out.println("6. [Bank Admin] Add an interest payment");
+        System.out.println("7. Exit");
     }
 
     public int getUserSelection(int max) {
@@ -65,33 +62,21 @@ public class MainMenu {
     public void processInput(int selection) {
         switch (selection) {
             case 1:
-                performDeposit();
+                selectAccount();
                 break;
             case 2:
-                performWithdraw();
-                break;
-            case 3:
-                checkBalance();
-                break;
-            case 4:
-                displayTransactionHistory();
-                break;
-            case 5:
-                changePinNumber();
-                break;
-            case 6:
                 createAdditionalAccount();
                 break;
-            case 7:
+            case 3:
                 closeExistingAccount();
                 break;
-            case 8:
+            case 4:
                 transferBetweenAccounts();
                 break;
-            case 9:
+            case 5:
                 adminCollectFees();
                 break;
-            case 10:
+            case 6:
                 adminInterestPayment();
                 break;
             default:
@@ -99,95 +84,22 @@ public class MainMenu {
         }
     }
 
-    public void performDeposit() {
-        System.out.print("Please enter the name of the account: ");
-        String accountName = keyboardInput.next();
-
-        if (!allAccounts.containsKey(accountName)) {
-            System.out.println("That account does not exist.");
-            return;
+    public void selectAccount() {
+        System.out.println("Your accounts:");
+        for (Map.Entry<String, BankAccount> entry : allAccounts.entrySet()) {
+            System.out.println("- " + entry.getKey() + " (" + entry.getValue().getAccountType() + ")");
         }
-
-        double depositAmount = -1;
-        while (depositAmount < 0) {
-            System.out.print("How much would you like to deposit: ");
-            depositAmount = keyboardInput.nextDouble();
-        }
-
-        allAccounts.get(accountName).deposit(depositAmount);
-        System.out.println("Deposit successful.");
-    }
-
-    public void performWithdraw() {
-        System.out.print("Please enter the name of the account: ");
-        String accountName = keyboardInput.next();
-
-        if (!allAccounts.containsKey(accountName)) {
-            System.out.println("That account does not exist.");
-            return;
-        }
-
-        double withdrawAmount = -1;
-        while (withdrawAmount < 0) {
-            System.out.print("How much would you like to withdraw: ");
-            withdrawAmount = keyboardInput.nextDouble();
-        }
-
-        try {
-            allAccounts.get(accountName).withdraw(withdrawAmount);
-            System.out.println("Withdrawal successful.");
-        } catch (IllegalArgumentException e) {
-            System.out.println("Invaild withdrawal amount. Withdrawal failed.");
-        }
-    }
-
-    public void checkBalance() {
-        System.out.print("Please enter the name of the account: ");
-        String accountName = keyboardInput.next();
-
-        if (!allAccounts.containsKey(accountName)) {
-            System.out.println("That account does not exist.");
-            return;
-        }
-
-        BankAccount account = allAccounts.get(accountName);
-        // should show account type now too
-        System.out.println(account.getAccountType() + " account balance: $" + account.getBalance());
-    }
-
-    public void displayTransactionHistory() {
-        System.out.print("Please enter the name of the account: ");
-        String accountName = keyboardInput.next();
-
-        if (!allAccounts.containsKey(accountName)) {
-            System.out.println("That account does not exist.");
-            return;
-        }
-
-        System.out.println("Transaction history: " + allAccounts.get(accountName).getTransactionHistory());
-    }
-
-    public void changePinNumber() {
-        System.out.print("Please enter the name of the account: ");
-        String accountName = keyboardInput.next();
-
-        if (!allAccounts.containsKey(accountName)) {
-            System.out.println("That account does not exist.");
-            return;
-        }
-
-        BankAccount account = allAccounts.get(accountName);
-
         
-        if (!promptAndValidateBirthday()) {
-            System.out.println("Failed to change pin number.");
+        System.out.print("Please enter the name of the account you want to select: ");
+        String accountName = keyboardInput.next();
+
+        if (!allAccounts.containsKey(accountName)) {
+            System.out.println("That account does not exist.");
             return;
         }
 
-        String newPin = promptToCreatePinNumber();
-        account.changePin(newPin);
-        
-        System.out.println("Successfully changed pin number for account " + accountName + ".");
+        AccountAdministrationMenu adminMenu = new AccountAdministrationMenu(currentUser, accountName, allAccounts.get(accountName));
+        adminMenu.run();
     }
 
     private String promptToCreatePinNumber() {
