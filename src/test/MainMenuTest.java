@@ -28,13 +28,13 @@ public class MainMenuTest {
   }
 
   private MainMenu createMenu() {
-    UserProfile user = new UserProfile("testUser", "testPass", "000000");
+    UserProfile user = new UserProfile("testUser", "testPass", "test@email.com", "01/01/1990", "000000");
     return new MainMenu(user);
   }
 
   @Test
   public void testAddingNewSavingsAccountValid() {
-    String input = "newAccount\nsavings\n000000\n";
+    String input = "John Doe\n01/01/1990\nnewAccount\nsavings\n000000\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
     MainMenu menu = createMenu();
@@ -45,7 +45,7 @@ public class MainMenuTest {
 
   @Test
   public void testAddingNewAccountInvalidNameThenValid() {
-    String input = "primary\nsecondTry\nchecking\n000000\n";
+    String input = "John Doe\n01/01/1990\nprimary\nsecondTry\nchecking\n000000\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
     ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -63,7 +63,7 @@ public class MainMenuTest {
 
   @Test
   public void testAddingNewAccountInvalidTypeThenValid() {
-    String input = "vacationFund\nbanana\nsavings\n000000\n";
+    String input = "John Doe\n01/01/1990\nvacationFund\nbanana\nsavings\n000000\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
     ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -82,7 +82,7 @@ public class MainMenuTest {
   // account type tests
   @Test
   public void testCreateSavingsAccountType() {
-    String input = "vacationFund\nsavings\n000000\n";
+    String input = "John Doe\n01/01/1990\nvacationFund\nsavings\n000000\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
     MainMenu menu = createMenu();
@@ -94,7 +94,7 @@ public class MainMenuTest {
 
   @Test
   public void testInvalidAccountTypeThenValid() {
-    String input = "trip\nbanana\nsavings\n000000\n";
+    String input = "John Doe\n01/01/1990\ntrip\nbanana\nsavings\n000000\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
     MainMenu menu = createMenu();
@@ -104,4 +104,18 @@ public class MainMenuTest {
         menu.getAccounts().get("trip").getAccountType());
   }
 
+  @Test
+  public void testAddingNewAccountFailsDobMismatch() {
+    String input = "John Doe\n12/31/1999\nnewAccount\nsavings\n000000\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+    menu.createAdditionalAccount();
+
+    assertTrue(output.toString().contains("Date of birth does not match our records. Account creation failed."));
+    assertEquals(new HashSet<>(Arrays.asList("primary")), menu.getAllAccountNames());
+  }
 }
