@@ -118,4 +118,36 @@ public class MainMenuTest {
     assertTrue(output.toString().contains("Date of birth does not match our records. Account creation failed."));
     assertEquals(new HashSet<>(Arrays.asList("primary")), menu.getAllAccountNames());
   }
+
+  @Test
+  public void testChangingPinSuccess() {
+    String input = "primary\n01/01/1990\n000000\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+    menu.changePinNumber();
+
+    assertTrue(output.toString().contains("Successfully changed pin number for account primary."));
+    assertEquals(new HashSet<>(Arrays.asList("primary")), menu.getAllAccountNames());
+  }
+
+
+  @Test
+  public void testChangingPinFail() {
+    String input = "primary\n12/31/1999\n000000\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+    menu.changePinNumber();
+
+    assertTrue(output.toString().contains("Date of birth does not match our records. Failed to change pin number."));
+    assertEquals(new HashSet<>(Arrays.asList("primary")), menu.getAllAccountNames());
+  }
+
 }
