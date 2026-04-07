@@ -57,6 +57,22 @@ public class StartupPage {
         System.out.print("Enter a password: ");
         String password = keyboardInput.next();
 
+        System.out.print("Enter your email address: ");
+        String email = keyboardInput.next();
+
+        while (!email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
+            System.out.print("Invalid email format. Please enter a valid email address: ");
+            email = keyboardInput.next();
+        }
+
+        System.out.print("Enter your date of birth (MM/DD/YYYY): ");
+        String dob = keyboardInput.next();
+
+        while (!dob.matches("^(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])/\\d{4}$")) {
+            System.out.print("Invalid date format. Please enter your date of birth (MM/DD/YYYY): ");
+            dob = keyboardInput.next();
+        }
+
         System.out.print("Enter a 6 digit pin number for your primary account: ");
         String pin = keyboardInput.next();
 
@@ -65,7 +81,7 @@ public class StartupPage {
             pin = keyboardInput.next();
         }
 
-        UserProfile newUser = new UserProfile(username, password, pin);
+        UserProfile newUser = new UserProfile(username, password, email, dob, pin);
         users.put(username, newUser);
 
         System.out.println("Account created successfully.");

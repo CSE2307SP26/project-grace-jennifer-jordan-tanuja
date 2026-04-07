@@ -18,7 +18,7 @@ public class UserProfileTest {
 
     @Before
     public void setup() {
-        this.user = new UserProfile("alice", "password123", "000000");
+        this.user = new UserProfile("alice", "password123", "alice@email.com", "01/01/1990", "000000");
     }
 
     @Test
@@ -45,5 +45,15 @@ public class UserProfileTest {
     public void testAccountsMapInitiallyContainsPrimaryOnly() {
         assertTrue(user.getAccounts().containsKey("primary"));
         assertEquals(1, user.getAccounts().size());
+    }
+
+    @Test
+    public void testUserProfileEmail() {
+        assertEquals("alice@email.com", user.getEmail());
+    }
+
+    @Test
+    public void testUserProfileDob() {
+        assertEquals("01/01/1990", user.getDob());
     }
 }
