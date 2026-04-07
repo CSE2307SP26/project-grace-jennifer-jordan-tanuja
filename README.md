@@ -52,4 +52,4 @@ From our testing, everything works, but we look forward to receiving feedback.
 ./runApp.sh <br><br>
 which contains the commands <br>
 cd src <br>
-javac main/*.java && java main.MainMenu
+javac main/*.java && java main.StartupPage
