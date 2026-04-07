@@ -27,7 +27,7 @@ public class StartupPageTest {
 
     @Test
     public void testCreateAccountSuccessfully() {
-        String input = "alice\npassword123\n";
+        String input = "alice\npassword123\nalice@example.com\n01/01/1990\n000000\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
 
         StartupPage startup = new StartupPage();
@@ -39,7 +39,7 @@ public class StartupPageTest {
 
     @Test
     public void testCreateAccountDuplicateUsernameThenValidUsername() {
-        String input = "alice\npassword123\nalice\nbob\nnewpass\n";
+        String input = "alice\npassword123\nalice@example.com\n01/01/1990\n000000\nalice\nbob\nnewpass\nbob@example.com\n02/02/1992\n111111\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
 
         ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -65,7 +65,7 @@ public class StartupPageTest {
         System.setOut(new PrintStream(output));
 
         StartupPage startup = new StartupPage();
-        startup.getUsers().put("alice", new UserProfile("alice", "password123"));
+        startup.getUsers().put("alice", new UserProfile("alice", "password123", "000000"));
 
         startup.login();
 
@@ -81,7 +81,7 @@ public class StartupPageTest {
         System.setOut(new PrintStream(output));
 
         StartupPage startup = new StartupPage();
-        startup.getUsers().put("alice", new UserProfile("alice", "password123"));
+        startup.getUsers().put("alice", new UserProfile("alice", "password123", "000000"));
 
         startup.login();
 
