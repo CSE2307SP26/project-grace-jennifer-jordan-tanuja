@@ -6,8 +6,8 @@ import java.util.Set;
 
 public class MainMenu {
 
-    private static final int EXIT_SELECTION = 10;
-    private static final int MAX_SELECTION = 10;
+    private static final int EXIT_SELECTION = 11;
+    private static final int MAX_SELECTION = 11;
 
     private UserProfile currentUser;
     private HashMap<String, BankAccount> allAccounts;
@@ -27,12 +27,13 @@ public class MainMenu {
         System.out.println("2. Withdraw from account");
         System.out.println("3. Check account balance");
         System.out.println("4. View transaction history");
-        System.out.println("5. Create an additional account");
-        System.out.println("6. Close an existing account");
-        System.out.println("7. Transfer money from one account to another");
-        System.out.println("8. [Bank Admin] Collect fees");
-        System.out.println("9. [Bank Admin] Add an interest payment");
-        System.out.println("10. Exit");
+        System.out.println("5. Change pin number for an account");
+        System.out.println("6. Create an additional account");
+        System.out.println("7. Close an existing account");
+        System.out.println("8. Transfer money from one account to another");
+        System.out.println("9. [Bank Admin] Collect fees");
+        System.out.println("10. [Bank Admin] Add an interest payment");
+        System.out.println("11. Exit");
     }
 
     public int getUserSelection(int max) {
@@ -76,18 +77,21 @@ public class MainMenu {
                 displayTransactionHistory();
                 break;
             case 5:
-                createAdditionalAccount();
+                changePinNumber();
                 break;
             case 6:
-                closeExistingAccount();
+                createAdditionalAccount();
                 break;
             case 7:
-                transferBetweenAccounts();
+                closeExistingAccount();
                 break;
             case 8:
-                adminCollectFees();
+                transferBetweenAccounts();
                 break;
             case 9:
+                adminCollectFees();
+                break;
+            case 10:
                 adminInterestPayment();
                 break;
             default:
@@ -163,8 +167,31 @@ public class MainMenu {
         System.out.println("Transaction history: " + allAccounts.get(accountName).getTransactionHistory());
     }
 
+    public void changePinNumber() {
+        System.out.print("Please enter the name of the account: ");
+        String accountName = keyboardInput.next();
+
+        if (!allAccounts.containsKey(accountName)) {
+            System.out.println("That account does not exist.");
+            return;
+        }
+
+        BankAccount account = allAccounts.get(accountName);
+
+        
+        if (!promptAndValidateBirthday()) {
+            System.out.println("Failed to change pin number.");
+            return;
+        }
+
+        String newPin = promptToCreatePinNumber();
+        account.changePin(newPin);
+        
+        System.out.println("Successfully changed pin number for account " + accountName + ".");
+    }
+
     private String promptToCreatePinNumber() {
-        System.out.print("Enter a 6 digit pin number for your new account: ");
+        System.out.print("Enter a 6 digit pin number for your account: ");
         String pin = keyboardInput.next();
 
         while (pin.length() != 6 || !pin.matches("\\d{6}")) {
@@ -174,6 +201,17 @@ public class MainMenu {
         return pin;
     }
 
+    private boolean promptAndValidateBirthday() {
+        System.out.print("Please enter your date of birth (MM/DD/YYYY): ");
+        String dob = keyboardInput.next();
+
+        if (!dob.equals(currentUser.getDob())) {
+            System.out.print("Date of birth does not match our records. ");
+            return false;
+        }
+        return true;
+    }
+
     public void createAdditionalAccount() {
         System.out.print("Please enter your full name: ");
         String fullName = keyboardInput.nextLine();
@@ -181,11 +219,8 @@ public class MainMenu {
             fullName = keyboardInput.nextLine();
         }
 
-        System.out.print("Please enter your date of birth (MM/DD/YYYY): ");
-        String dob = keyboardInput.next();
-
-        if (!dob.equals(currentUser.getDob())) {
-            System.out.println("Date of birth does not match our records. Account creation failed.");
+        if (!promptAndValidateBirthday()) {
+            System.out.println("Account creation failed.");
             return;
         }
 
