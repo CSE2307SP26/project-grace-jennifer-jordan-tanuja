@@ -114,7 +114,8 @@ public class StartupPageTest {
         assertTrue(printed.contains("Welcome to the 237 Bank App!"));
         assertTrue(printed.contains("1. Create an account"));
         assertTrue(printed.contains("2. Login"));
-        assertTrue(printed.contains("3. Exit"));
+        assertTrue(printed.contains("3. Bank Administrator Options"));
+        assertTrue(printed.contains("4. Exit"));
     }
 
     @Test

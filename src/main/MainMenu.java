@@ -7,8 +7,8 @@ import java.util.Map;
 
 public class MainMenu {
 
-    private static final int EXIT_SELECTION = 7;
-    private static final int MAX_SELECTION = 7;
+    private static final int EXIT_SELECTION = 5;
+    private static final int MAX_SELECTION = 5;
 
     private UserProfile currentUser;
     private HashMap<String, BankAccount> allAccounts;
@@ -28,9 +28,7 @@ public class MainMenu {
         System.out.println("2. Create an additional account");
         System.out.println("3. Close an existing account");
         System.out.println("4. Transfer money from one account to another");
-        System.out.println("5. [Bank Admin] Collect fees");
-        System.out.println("6. [Bank Admin] Add an interest payment");
-        System.out.println("7. Exit");
+        System.out.println("5. Exit");
     }
 
     public int getUserSelection(int max) {
@@ -72,12 +70,6 @@ public class MainMenu {
                 break;
             case 4:
                 transferBetweenAccounts();
-                break;
-            case 5:
-                adminCollectFees();
-                break;
-            case 6:
-                adminInterestPayment();
                 break;
             default:
                 break;
@@ -210,46 +202,6 @@ public class MainMenu {
         } catch (IllegalArgumentException e) {
             System.out
                     .println("Transfer failed. Make sure the amount is valid and the source account has enough funds.");
-        }
-    }
-
-    public void adminCollectFees() {
-        System.out.print("Please enter the name of the account you want to collect fees from: ");
-        String accountName = keyboardInput.next();
-
-        if (!allAccounts.containsKey(accountName)) {
-            System.out.println("This account does not exist.");
-            return;
-        }
-
-        System.out.print("Please enter the fee amount: ");
-        try {
-            double fee = keyboardInput.nextDouble();
-            BankAdministrator admin = new BankAdministrator();
-            admin.collectFees(allAccounts.get(accountName), fee);
-            System.out.println("Fee collected.");
-        } catch (Exception e) {
-            System.out.println("Invalid fee amount. Fee collection failed.");
-        }
-    }
-
-    public void adminInterestPayment() {
-        System.out.print("Please enter the name of the account you want to add an interest payment to: ");
-        String accountName = keyboardInput.next();
-
-        if (!allAccounts.containsKey(accountName)) {
-            System.out.println("This account does not exist.");
-            return;
-        }
-
-        System.out.print("Please enter the interest rate as a percentage: ");
-        try {
-            double percentageRate = keyboardInput.nextDouble();
-            BankAdministrator admin = new BankAdministrator();
-            admin.addInterestPayment(allAccounts.get(accountName), percentageRate);
-            System.out.println("Interest payment added.");
-        } catch (Exception e) {
-            System.out.println("Invalid interest rate. Interest payment failed.");
         }
     }
 

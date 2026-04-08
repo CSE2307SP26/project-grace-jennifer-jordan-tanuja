@@ -17,24 +17,25 @@ public class StartupPage {
         System.out.println("Welcome to the 237 Bank App!");
         System.out.println("1. Create an account");
         System.out.println("2. Login");
-        System.out.println("3. Exit");
+        System.out.println("3. Bank Administrator Options");
+        System.out.println("4. Exit");
     }
 
     public int getUserSelection() {
         int selection = -1;
 
-        while (selection < 1 || selection > 3) {
+        while (selection < 1 || selection > 4) {
             System.out.print("Please make a selection: ");
 
             if (keyboardInput.hasNextInt()) {
                 selection = keyboardInput.nextInt();
 
-                if (selection < 1 || selection > 3) {
-                    System.out.println("This input is invalid. Please select a number from 1-3");
+                if (selection < 1 || selection > 4) {
+                    System.out.println("This input is invalid. Please select a number from 1-4");
                 }
             } else {
                 keyboardInput.next();
-                System.out.println("This input is invalid. Please select a number from 1-3");
+                System.out.println("This input is invalid. Please select a number from 1-4");
             }
         }
 
@@ -103,10 +104,23 @@ public class StartupPage {
         }
     }
 
+    private HashMap<String, BankAccount> getAllAccountsForAdmin() {
+        HashMap<String, BankAccount> allAccounts = new HashMap<>();
+
+        for (UserProfile user : users.values()) {
+            for (String accountName : user.getAccountNames()) {
+                String key = user.getUsername() + ":" + accountName;
+                allAccounts.put(key, user.getAccounts().get(accountName));
+            }
+        }
+
+        return allAccounts;
+    }
+
     public void run() {
         int selection = -1;
 
-        while (selection != 3) {
+        while (selection != 4) {
             displayOptions();
             selection = getUserSelection();
 
@@ -122,6 +136,11 @@ public class StartupPage {
                     }
                     break;
                 case 3:
+                    HashMap<String, BankAccount> allAccounts = getAllAccountsForAdmin();
+                    BankAdministratorMenu administratorMenu = new BankAdministratorMenu(allAccounts);
+                    administratorMenu.run();
+                    break;
+                case 4:
                     System.out.println("Exiting app.");
                     break;
                 default:
