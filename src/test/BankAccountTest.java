@@ -4,6 +4,7 @@ import main.BankAccount;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -88,4 +89,23 @@ public class BankAccountTest {
         testAccount.withdraw(25);
         assertEquals(100, testAccount.getBalance(), 0.01);
     }
+
+    @Test
+    public void testVerifyPinCorrectPin() {
+        BankAccount testAccount = new BankAccount("checking", "123456");
+        assertTrue(testAccount.verifyPin("123456"));
+    }
+
+    @Test
+    public void testVerifyPinIncorrectPin() {
+        BankAccount testAccount = new BankAccount("checking", "123456");
+        assertTrue(!testAccount.verifyPin("111111"));
+    }
+
+    @Test
+    public void testVerifyPinEmptyPinEntered() {
+        BankAccount testAccount = new BankAccount("checking", "123456");
+        assertTrue(!testAccount.verifyPin(""));
+    }
+
 }
