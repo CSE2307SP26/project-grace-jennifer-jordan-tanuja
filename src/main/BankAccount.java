@@ -21,6 +21,10 @@ public class BankAccount {
         this.pin = newPin;
     }
 
+    public boolean verifyPin(String enteredPin){
+        return this.pin.equals(enteredPin);
+    }
+
     public void deposit(double amount) {
         if (amount > 0) {
             this.balance += amount;

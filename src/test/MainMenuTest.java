@@ -258,4 +258,29 @@ public class MainMenuTest {
     assertTrue(output.toString().contains("Transfer failed."));
     assertEquals(new HashSet<>(Arrays.asList("primary", "savings")), menu.getAllAccountNames());
   }
+
+  @Test
+  public void testCorrectPinOpensAccountMenu() {
+    String input = "primary\n000000\n6\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+    MainMenu menu = createMenu();
+    menu.selectAccount();
+    assertTrue(output.toString().contains("Currently in account primary"));
+  }
+
+  @Test
+  public void testIncorrectPinPreventsAccess() {
+    String input = "primary\n123456\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+    MainMenu menu = createMenu();
+    menu.selectAccount();
+    assertTrue(output.toString().contains("Incorrect PIN. Access denied."));
+  }
+
 }

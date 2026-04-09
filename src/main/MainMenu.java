@@ -90,6 +90,15 @@ public class MainMenu {
             return;
         }
 
+        BankAccount selectedAccount = allAccounts.get(accountName);
+
+        System.out.print("Please enter the pin for " + accountName+ ": ");
+        String enteredPin = keyboardInput.next();
+        if(selectedAccount.verifyPin(enteredPin)==false){
+            System.out.println("Incorrect PIN. Access denied.");
+            return;
+        }
+        
         AccountAdministrationMenu adminMenu = new AccountAdministrationMenu(currentUser, accountName, allAccounts.get(accountName));
         adminMenu.run();
     }
