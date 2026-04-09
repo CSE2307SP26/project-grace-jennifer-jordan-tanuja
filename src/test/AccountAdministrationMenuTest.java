@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Scanner;
 
 import org.junit.After;
 import org.junit.Test;
@@ -38,7 +39,8 @@ public class AccountAdministrationMenuTest {
         System.setOut(new PrintStream(output));
 
         UserProfile user = new UserProfile("testUser", "testPass", "test@email.com", "01/01/1990", "111111");
-        AccountAdministrationMenu adminMenu = new AccountAdministrationMenu(user, "primary", user.getAccounts().get("primary"));
+        Scanner testScanner = new Scanner(System.in);
+        AccountAdministrationMenu adminMenu = new AccountAdministrationMenu(user, "primary", user.getAccounts().get("primary"), testScanner);
         adminMenu.changePinNumber();
 
         assertTrue(output.toString().contains("Successfully changed pin number for account primary."));
@@ -53,7 +55,7 @@ public class AccountAdministrationMenuTest {
         System.setOut(new PrintStream(output));
 
         UserProfile user = new UserProfile("testUser", "testPass", "test@email.com", "01/01/1990", "111111");
-        AccountAdministrationMenu adminMenu = new AccountAdministrationMenu(user, "primary", user.getAccounts().get("primary"));
+        AccountAdministrationMenu adminMenu = new AccountAdministrationMenu(user, "primary", user.getAccounts().get("primary"), new Scanner(System.in));
         adminMenu.changePinNumber();
 
         assertTrue(output.toString().contains("Date of birth does not match our records. Failed to change pin number."));
