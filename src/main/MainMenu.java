@@ -99,7 +99,7 @@ public class MainMenu {
             return;
         }
         
-        AccountAdministrationMenu adminMenu = new AccountAdministrationMenu(currentUser, accountName, allAccounts.get(accountName));
+        AccountAdministrationMenu adminMenu = new AccountAdministrationMenu(currentUser, accountName, selectedAccount, keyboardInput);
         adminMenu.run();
     }
 

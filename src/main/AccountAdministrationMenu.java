@@ -9,11 +9,11 @@ public class AccountAdministrationMenu {
     private BankAccount account;
     private Scanner keyboardInput;
 
-    public AccountAdministrationMenu(UserProfile user, String accountName, BankAccount account) {
+    public AccountAdministrationMenu(UserProfile user, String accountName, BankAccount account, Scanner keyboardInput) {
         this.currentUser = user;
         this.accountName = accountName;
         this.account = account;
-        this.keyboardInput = new Scanner(System.in);
+        this.keyboardInput = keyboardInput;
     }
     
     public void displayOptions() {
