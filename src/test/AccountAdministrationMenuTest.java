@@ -1,22 +1,19 @@
 package test;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.Arrays;
-import java.util.HashSet;
+
 import java.util.Scanner;
 
 import org.junit.After;
 import org.junit.Test;
 
 import main.AccountAdministrationMenu;
-import main.BankAccount;
-import main.MainMenu;
+
 import main.UserProfile;
 
 public class AccountAdministrationMenuTest {
@@ -40,7 +37,8 @@ public class AccountAdministrationMenuTest {
 
         UserProfile user = new UserProfile("testUser", "testPass", "test@email.com", "01/01/1990", "111111");
         Scanner testScanner = new Scanner(System.in);
-        AccountAdministrationMenu adminMenu = new AccountAdministrationMenu(user, "primary", user.getAccounts().get("primary"), testScanner);
+        AccountAdministrationMenu adminMenu = new AccountAdministrationMenu(user, "primary",
+                user.getAccounts().get("primary"), testScanner);
         adminMenu.changePinNumber();
 
         assertTrue(output.toString().contains("Successfully changed pin number for account primary."));
@@ -55,9 +53,11 @@ public class AccountAdministrationMenuTest {
         System.setOut(new PrintStream(output));
 
         UserProfile user = new UserProfile("testUser", "testPass", "test@email.com", "01/01/1990", "111111");
-        AccountAdministrationMenu adminMenu = new AccountAdministrationMenu(user, "primary", user.getAccounts().get("primary"), new Scanner(System.in));
+        AccountAdministrationMenu adminMenu = new AccountAdministrationMenu(user, "primary",
+                user.getAccounts().get("primary"), new Scanner(System.in));
         adminMenu.changePinNumber();
 
-        assertTrue(output.toString().contains("Date of birth does not match our records. Failed to change pin number."));
+        assertTrue(
+                output.toString().contains("Date of birth does not match our records. Failed to change pin number."));
     }
 }
