@@ -7,8 +7,8 @@ import java.util.Map;
 
 public class MainMenu {
 
-    private static final int EXIT_SELECTION = 5;
-    private static final int MAX_SELECTION = 5;
+    private static final int EXIT_SELECTION = 6;
+    private static final int MAX_SELECTION = 6;
 
     private UserProfile currentUser;
     private HashMap<String, BankAccount> allAccounts;
@@ -28,7 +28,8 @@ public class MainMenu {
         System.out.println("2. Create an additional account");
         System.out.println("3. Close an existing account");
         System.out.println("4. Transfer money from one account to another");
-        System.out.println("5. Exit");
+        System.out.println("5. Apply for a loan");
+        System.out.println("6. Exit");
     }
 
     public int getUserSelection(int max) {
@@ -71,6 +72,9 @@ public class MainMenu {
             case 4:
                 transferBetweenAccounts();
                 break;
+            case 5:
+                applyForLoan();
+                break;
             default:
                 break;
         }
@@ -81,7 +85,7 @@ public class MainMenu {
         for (Map.Entry<String, BankAccount> entry : allAccounts.entrySet()) {
             System.out.println("- " + entry.getKey() + " (" + entry.getValue().getAccountType() + ")");
         }
-        
+
         System.out.print("Please enter the name of the account you want to select: ");
         String accountName = keyboardInput.next();
 
@@ -92,14 +96,15 @@ public class MainMenu {
 
         BankAccount selectedAccount = allAccounts.get(accountName);
 
-        System.out.print("Please enter the pin for " + accountName+ ": ");
+        System.out.print("Please enter the pin for " + accountName + ": ");
         String enteredPin = keyboardInput.next();
-        if(selectedAccount.verifyPin(enteredPin)==false){
+        if (selectedAccount.verifyPin(enteredPin) == false) {
             System.out.println("Incorrect PIN. Access denied.");
             return;
         }
-        
-        AccountAdministrationMenu adminMenu = new AccountAdministrationMenu(currentUser, accountName, selectedAccount, keyboardInput);
+
+        AccountAdministrationMenu adminMenu = new AccountAdministrationMenu(currentUser, accountName, selectedAccount,
+                keyboardInput);
         adminMenu.run();
     }
 
@@ -212,6 +217,69 @@ public class MainMenu {
             System.out
                     .println("Transfer failed. Make sure the amount is valid and the source account has enough funds.");
         }
+    }
+
+    public void applyForLoan() {
+
+        System.out.println("Loan Application");
+
+        System.out.print("Please enter your full name: ");
+        String fullName = keyboardInput.nextLine();
+
+        while (fullName.trim().isEmpty()) {
+            System.out.print("Full name cannot be empty. Please enter your full name: ");
+            fullName = keyboardInput.nextLine();
+        }
+
+        // birthday check
+        if (!promptAndValidateBirthday()) {
+            System.out.println("Loan application failed.");
+            return;
+        }
+
+        double income = -1;
+        while (income <= 0) {
+            System.out.print("Please enter your annual income: ");
+            if (keyboardInput.hasNextDouble()) {
+                income = keyboardInput.nextDouble();
+                if (income <= 0) {
+                    System.out.println("Income must be greater than 0.");
+                }
+            } else {
+                keyboardInput.next();
+                System.out.println("Invalid input. Please enter a valid number for income.");
+            }
+        }
+
+        double loanAmount = -1;
+        while (loanAmount <= 0) {
+            System.out.print("Please enter the loan amount requested: ");
+            if (keyboardInput.hasNextDouble()) {
+                loanAmount = keyboardInput.nextDouble();
+                if (loanAmount <= 0) {
+                    System.out.println("Loan amount must be greater than 0.");
+                }
+            } else {
+                keyboardInput.next();
+                System.out.println("Invalid input. Please enter a valid number for loan amount.");
+            }
+        }
+
+        int durationMonths = -1;
+        while (durationMonths <= 0) {
+            System.out.print("Please enter the duration of the loan in months: ");
+            if (keyboardInput.hasNextInt()) {
+                durationMonths = keyboardInput.nextInt();
+                if (durationMonths <= 0) {
+                    System.out.println("Loan duration must be greater than 0.");
+                }
+            } else {
+                keyboardInput.next();
+                System.out.println("Invalid input. Please enter a valid whole number for loan duration.");
+            }
+        }
+
+        System.out.println("Loan application submitted successfully.");
     }
 
     public Set<String> getAllAccountNames() {
