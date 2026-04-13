@@ -220,7 +220,7 @@ public class MainMenu {
     }
 
     public void applyForLoan() {
-
+        keyboardInput.nextLine(); // consume leftover newline
         System.out.println("Loan Application");
 
         System.out.print("Please enter your full name: ");
@@ -231,7 +231,6 @@ public class MainMenu {
             fullName = keyboardInput.nextLine();
         }
 
-        // birthday check
         if (!promptAndValidateBirthday()) {
             System.out.println("Loan application failed.");
             return;
@@ -280,6 +279,15 @@ public class MainMenu {
         }
 
         System.out.println("Loan application submitted successfully.");
+
+        String decision = LoanService.evaluateLoanDecision(
+                currentUser,
+                income,
+                loanAmount,
+                durationMonths,
+                allAccounts.get("primary"));
+
+        System.out.println(decision);
     }
 
     public Set<String> getAllAccountNames() {

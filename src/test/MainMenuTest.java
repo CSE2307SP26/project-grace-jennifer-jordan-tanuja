@@ -286,7 +286,7 @@ public class MainMenuTest {
   // apply for loan tests
   @Test
   public void testApplyForLoanSuccessfully() {
-    String input = "John Doe\n01/01/1990\n50000\n10000\n36\n";
+    String input = "\nJohn Doe\n01/01/1990\n50000\n10000\n36\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
     ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -297,11 +297,12 @@ public class MainMenuTest {
 
     String printed = output.toString();
     assertTrue(printed.contains("Loan application submitted successfully."));
+    assertTrue(printed.contains("Loan Approved!"));
   }
 
   @Test
   public void testApplyForLoanFailsDobMismatch() {
-    String input = "John Doe\n12/31/1999\n";
+    String input = "\nJohn Doe\n12/31/1999\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
     ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -317,7 +318,7 @@ public class MainMenuTest {
 
   @Test
   public void testApplyForLoanInvalidIncomeThenValid() {
-    String input = "John Doe\n01/01/1990\nabc\n50000\n10000\n36\n";
+    String input = "\nJohn Doe\n01/01/1990\nabc\n50000\n10000\n36\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
     ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -329,11 +330,12 @@ public class MainMenuTest {
     String printed = output.toString();
     assertTrue(printed.contains("Invalid input. Please enter a valid number for income."));
     assertTrue(printed.contains("Loan application submitted successfully."));
+    assertTrue(printed.contains("Loan Approved!"));
   }
 
   @Test
   public void testApplyForLoanInvalidLoanAmountThenValid() {
-    String input = "John Doe\n01/01/1990\n50000\nabc\n10000\n36\n";
+    String input = "\nJohn Doe\n01/01/1990\n50000\nabc\n10000\n36\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
     ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -345,11 +347,12 @@ public class MainMenuTest {
     String printed = output.toString();
     assertTrue(printed.contains("Invalid input. Please enter a valid number for loan amount."));
     assertTrue(printed.contains("Loan application submitted successfully."));
+    assertTrue(printed.contains("Loan Approved!"));
   }
 
   @Test
   public void testApplyForLoanInvalidDurationThenValid() {
-    String input = "John Doe\n01/01/1990\n50000\n10000\nabc\n36\n";
+    String input = "\nJohn Doe\n01/01/1990\n50000\n10000\nabc\n36\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
     ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -361,6 +364,38 @@ public class MainMenuTest {
     String printed = output.toString();
     assertTrue(printed.contains("Invalid input. Please enter a valid whole number for loan duration."));
     assertTrue(printed.contains("Loan application submitted successfully."));
+    assertTrue(printed.contains("Loan Approved!"));
   }
 
+  @Test
+  public void testApplyForLoanDeniedForLargeLoanComparedToIncome() {
+    String input = "\nJohn Doe\n01/01/1990\n50000\n500000\n60\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+    menu.applyForLoan();
+
+    String printed = output.toString();
+    assertTrue(printed.contains("Loan application submitted successfully."));
+    assertTrue(printed.contains("Loan Denied: Loan amount is too high compared to your income."));
+  }
+
+  @Test
+  public void testApplyForLoanDeniedForHighMonthlyPayment() {
+    String input = "\nJohn Doe\n01/01/1990\n100000\n500000\n60\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+    menu.applyForLoan();
+
+    String printed = output.toString();
+    assertTrue(printed.contains("Loan application submitted successfully."));
+    assertTrue(printed.contains("Loan Denied: Monthly payment would be too high based on your income."));
+  }
 }
