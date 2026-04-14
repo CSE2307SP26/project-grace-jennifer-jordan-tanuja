@@ -6,8 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 public class LoanService {
-    public static String evaluateLoanDecision(UserProfile user, double income, double loanAmount, int durationMonths,
-            BankAccount primaryAccount) {
+    public static String evaluateLoanDecision(UserProfile user, double income, double loanAmount, int durationMonths) {
 
         int age = calculateAgeFromDob(user.getDob());
 
@@ -38,7 +37,7 @@ public class LoanService {
             return "Loan Denied: Monthly payment would be too high based on your income.";
         }
 
-        if (primaryAccount != null && primaryAccount.getBalance() < 0) {
+        if (user.getBalanceAcrossAllAccounts() < 0) {
             return "Loan Denied: Existing account balance indicates too much current debt.";
         }
 
@@ -55,4 +54,6 @@ public class LoanService {
             return -1;
         }
     }
+
+    
 }

@@ -5,8 +5,9 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.Map;
 
-public class MainMenu {
 
+
+public class MainMenu {
     private static final int EXIT_SELECTION = 6;
     private static final int MAX_SELECTION = 6;
 
@@ -80,11 +81,14 @@ public class MainMenu {
         }
     }
 
-    public void selectAccount() {
+    public void showAccountOptions() {
         System.out.println("Your accounts:");
         for (Map.Entry<String, BankAccount> entry : allAccounts.entrySet()) {
             System.out.println("- " + entry.getKey() + " (" + entry.getValue().getAccountType() + ")");
         }
+    }
+    public void selectAccount() {
+        showAccountOptions();
 
         System.out.print("Please enter the name of the account you want to select: ");
         String accountName = keyboardInput.next();
@@ -284,12 +288,30 @@ public class MainMenu {
                 currentUser,
                 income,
                 loanAmount,
-                durationMonths,
-                allAccounts.get("primary"));
+                durationMonths);
 
         System.out.println(decision);
+        if (decision.equals("Loan Approved!")) {
+            chooseAccountToDepositLoan(loanAmount);
+        }
     }
 
+    public void chooseAccountToDepositLoan(double loanAmount) {
+        System.out.println("Choose an account to deposit your approved loan");
+        showAccountOptions();
+
+        String accountSelection = null;
+        while (!currentUser.getAccountNames().contains(accountSelection)) {
+            if (accountSelection != null) {
+                System.out.println("Invalid account selection. Choose from your existing accounts");
+            }
+            accountSelection = keyboardInput.next();
+        }
+
+        currentUser.getAccounts().get(accountSelection).deposit(loanAmount);
+        System.out.println("Successfully deposited loan to " + accountSelection);
+    }
+ 
     public Set<String> getAllAccountNames() {
         return allAccounts.keySet();
     }
