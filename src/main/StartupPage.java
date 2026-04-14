@@ -104,19 +104,6 @@ public class StartupPage {
         }
     }
 
-    private HashMap<String, BankAccount> getAllAccountsForAdmin() {
-        HashMap<String, BankAccount> allAccounts = new HashMap<>();
-
-        for (UserProfile user : users.values()) {
-            for (String accountName : user.getAccountNames()) {
-                String key = user.getUsername() + ":" + accountName;
-                allAccounts.put(key, user.getAccounts().get(accountName));
-            }
-        }
-
-        return allAccounts;
-    }
-
     public void run() {
         int selection = -1;
 
@@ -136,9 +123,12 @@ public class StartupPage {
                     }
                     break;
                 case 3:
-                    HashMap<String, BankAccount> allAccounts = getAllAccountsForAdmin();
-                    BankAdministratorMenu administratorMenu = new BankAdministratorMenu(allAccounts);
-                    administratorMenu.run();
+                    HashMap<String, BankAccount> allAccounts = new HashMap<>();
+                    for (UserProfile user : users.values()) {
+                        allAccounts.putAll(user.getAccounts());
+                    }
+                    BankAdministratorMenu adminMenu = new BankAdministratorMenu(allAccounts, users);
+                    adminMenu.run();
                     break;
                 case 4:
                     System.out.println("Exiting app.");
