@@ -286,7 +286,7 @@ public class MainMenuTest {
   // apply for loan tests
   @Test
   public void testApplyForLoanSuccessfully() {
-    String input = "\nJohn Doe\n01/01/1990\n50000\n10000\n36\n";
+    String input = "\nJohn Doe\n01/01/1990\n50000\n10000\n36\nprimary\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
     ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -318,7 +318,7 @@ public class MainMenuTest {
 
   @Test
   public void testApplyForLoanInvalidIncomeThenValid() {
-    String input = "\nJohn Doe\n01/01/1990\nabc\n50000\n10000\n36\n";
+    String input = "\nJohn Doe\n01/01/1990\nabc\n50000\n10000\n36\nprimary\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
     ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -335,7 +335,7 @@ public class MainMenuTest {
 
   @Test
   public void testApplyForLoanInvalidLoanAmountThenValid() {
-    String input = "\nJohn Doe\n01/01/1990\n50000\nabc\n10000\n36\n";
+    String input = "\nJohn Doe\n01/01/1990\n50000\nabc\n10000\n36\nprimary\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
     ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -352,7 +352,7 @@ public class MainMenuTest {
 
   @Test
   public void testApplyForLoanInvalidDurationThenValid() {
-    String input = "\nJohn Doe\n01/01/1990\n50000\n10000\nabc\n36\n";
+    String input = "\nJohn Doe\n01/01/1990\n50000\n10000\nabc\n36\nprimary\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
 
     ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -397,5 +397,23 @@ public class MainMenuTest {
     String printed = output.toString();
     assertTrue(printed.contains("Loan application submitted successfully."));
     assertTrue(printed.contains("Loan Denied: Monthly payment would be too high based on your income."));
+  }
+
+  @Test 
+  public void testLoanWasDepositedToSelectedAccount() {
+    String input = "\nJohn Doe\n01/01/1990\n50000\n10000\n36\nprimary\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+
+    menu.applyForLoan();
+
+    String printed = output.toString();
+    assertTrue(printed.contains("Loan application submitted successfully."));
+    assertTrue(printed.contains("Loan Approved!"));
+    assertTrue(printed.contains("Successfully deposited loan to primary"));
   }
 }
