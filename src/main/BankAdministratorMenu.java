@@ -6,10 +6,12 @@ import java.util.Scanner;
 public class BankAdministratorMenu {
 
     private HashMap<String, BankAccount> allAccounts;
+    private HashMap<String, UserProfile> allUsers;
     private Scanner keyboardInput;
 
-    public BankAdministratorMenu(HashMap<String, BankAccount> allAccounts) {
+    public BankAdministratorMenu(HashMap<String, BankAccount> allAccounts, HashMap<String, UserProfile> allUsers) {
         this.allAccounts = allAccounts;
+        this.allUsers = allUsers;
         this.keyboardInput = new Scanner(System.in);
     }
 
@@ -18,7 +20,8 @@ public class BankAdministratorMenu {
         System.out.println("1. [Bank Admin] Collect fees");
         System.out.println("2. [Bank Admin] Add an interest payment");
         System.out.println("3. [Bank Admin] Add an interest payment to all savings accounts");
-        System.out.println("4. Exit");
+        System.out.println("4. [Bank Admin] View all customers");
+        System.out.println("5. Exit");
     }
 
     public int getUserSelection(int max) {
@@ -54,6 +57,9 @@ public class BankAdministratorMenu {
                 break;
             case 3:
                 adminInterestPaymentsAllAccounts();
+                break;
+            case 4:
+                viewAllCustomers();
                 break;
             default:
                 break;
@@ -114,12 +120,22 @@ public class BankAdministratorMenu {
 
     }
 
+    public void viewAllCustomers() {
+        System.out.println("Bank Customers:");
+        if (allUsers == null || allUsers.isEmpty()) {
+            System.out.println("No customers found.");
+            return;
+        }
+        for (String username : allUsers.keySet()) {
+            System.out.println("- " + username);
+        }
+    }
 
     public void run() {
          int selection = -1;
-         while (selection != 4) {
+         while (selection != 5) {
             displayOptions();
-            selection = getUserSelection(4);
+            selection = getUserSelection(5);
             processInput(selection);
         }
         
