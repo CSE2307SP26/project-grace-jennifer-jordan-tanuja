@@ -26,24 +26,7 @@ public class StartupPage {
     }
 
     public int getUserSelection() {
-        int selection = -1;
-
-        while (selection < 1 || selection > 4) {
-            System.out.print("Please make a selection: ");
-
-            if (keyboardInput.hasNextInt()) {
-                selection = keyboardInput.nextInt();
-
-                if (selection < 1 || selection > 4) {
-                    System.out.println("This input is invalid. Please select a number from 1-4");
-                }
-            } else {
-                keyboardInput.next();
-                System.out.println("This input is invalid. Please select a number from 1-4");
-            }
-        }
-
-        return selection;
+        return InputValidator.getUserSelection(keyboardInput, 4);
     }
 
     public HashMap<String, UserProfile> getUsers() {
@@ -51,45 +34,44 @@ public class StartupPage {
     }
 
     public void createAccount() {
+        String username = getNewUsername();
+        System.out.print("Enter a password: ");
+        String password = keyboardInput.next();
+        String email = getValidEmail();
+        String dob = getValidDob();
+        String pin = InputValidator.getValidPin(keyboardInput, "Enter a 6 digit pin number for your primary account: ");
+        users.put(username, new UserProfile(username, password, email, dob, pin));
+        System.out.println("Account created successfully.");
+    }
+
+    private String getNewUsername() {
         System.out.print("Enter a username: ");
         String username = keyboardInput.next();
-
         while (users.containsKey(username)) {
             System.out.print("That username already exists. Enter a different username: ");
             username = keyboardInput.next();
         }
+        return username;
+    }
 
-        System.out.print("Enter a password: ");
-        String password = keyboardInput.next();
-
+    private String getValidEmail() {
         System.out.print("Enter your email address: ");
         String email = keyboardInput.next();
-
         while (!email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
             System.out.print("Invalid email format. Please enter a valid email address: ");
             email = keyboardInput.next();
         }
+        return email;
+    }
 
+    private String getValidDob() {
         System.out.print("Enter your date of birth (MM/DD/YYYY): ");
         String dob = keyboardInput.next();
-
         while (!dob.matches("^(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])/\\d{4}$")) {
             System.out.print("Invalid date format. Please enter your date of birth (MM/DD/YYYY): ");
             dob = keyboardInput.next();
         }
-
-        System.out.print("Enter a 6 digit pin number for your primary account: ");
-        String pin = keyboardInput.next();
-
-        while (pin.length() != 6 || !pin.matches("\\d{6}")) {
-            System.out.print("Pin number must have 6 numerical digits. Enter a valid pin number: ");
-            pin = keyboardInput.next();
-        }
-
-        UserProfile newUser = new UserProfile(username, password, email, dob, pin);
-        users.put(username, newUser);
-
-        System.out.println("Account created successfully.");
+        return dob;
     }
 
     public UserProfile login() {
@@ -102,10 +84,9 @@ public class StartupPage {
         if (users.containsKey(username) && users.get(username).checkPassword(password)) {
             System.out.println("Login successful.");
             return users.get(username);
-        } else {
-            System.out.println("Invalid username or password.");
-            return null;
         }
+        System.out.println("Invalid username or password.");
+        return null;
     }
 
     public BankAdministrator loginAdmin() {
@@ -118,10 +99,9 @@ public class StartupPage {
         if (admins.containsKey(employeeId) && admins.get(employeeId).checkPassword(password)) {
             System.out.println("Admin login successful.");
             return admins.get(employeeId);
-        } else {
-            System.out.println("Invalid employee ID or password.");
-            return null;
         }
+        System.out.println("Invalid employee ID or password.");
+        return null;
     }
 
     public void run() {
@@ -136,22 +116,10 @@ public class StartupPage {
                     createAccount();
                     break;
                 case 2:
-                    UserProfile loggedInUser = login();
-                    if (loggedInUser != null) {
-                        MainMenu menu = new MainMenu(loggedInUser);
-                        menu.run();
-                    }
+                    handleLogin();
                     break;
                 case 3:
-                    BankAdministrator loggedInAdmin = loginAdmin();
-                    if (loggedInAdmin != null) {
-                        HashMap<String, BankAccount> allAccounts = new HashMap<>();
-                        for (UserProfile user : users.values()) {
-                            allAccounts.putAll(user.getAccounts());
-                        }
-                        BankAdministratorMenu adminMenu = new BankAdministratorMenu(loggedInAdmin, allAccounts, users);
-                        adminMenu.run();
-                    }
+                    handleAdminLogin();
                     break;
                 case 4:
                     System.out.println("Exiting app.");
@@ -159,6 +127,24 @@ public class StartupPage {
                 default:
                     break;
             }
+        }
+    }
+
+    private void handleLogin() {
+        UserProfile loggedInUser = login();
+        if (loggedInUser != null) {
+            new MainMenu(loggedInUser).run();
+        }
+    }
+
+    private void handleAdminLogin() {
+        BankAdministrator loggedInAdmin = loginAdmin();
+        if (loggedInAdmin != null) {
+            HashMap<String, BankAccount> allAccounts = new HashMap<>();
+            for (UserProfile user : users.values()) {
+                allAccounts.putAll(user.getAccounts());
+            }
+            new BankAdministratorMenu(loggedInAdmin, allAccounts, users).run();
         }
     }
 
