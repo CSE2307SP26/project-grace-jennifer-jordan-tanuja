@@ -8,7 +8,7 @@
 * Tanuja Gunapooti
 
 ## Project Description
-This is a Java terminal app that simulates a bank. It has features for both customers and administrators. Customers can open or close accounts, check balances, view transaction history, and move money through deposits, withdrawals, or transfers. Administrators can collect fees and add interest to existing accounts.
+This is a Java terminal app that simulates a bank. It has features for both customers and administrators. Customers can create a bank login, open or close accounts, check balances, view transaction history, and move money through deposits, withdrawals, or transfers. Administrators can collect fees and add interest to existing accounts.
 
 ## User stories
 
@@ -34,22 +34,31 @@ This is a Java terminal app that simulates a bank. It has features for both cust
 18. A bank customer should be required to write their PIN correctly before being able to access an account. (Jordan)
 19. A bank administrator should be able to add an interest payment to all existing savings accounts at once. (Jordan)
 
-## What user stories do you intend to complete next iteration?
 ### Iteration 3
-20. A bank administrator should be able to add a late fee to unpaid credit card bill.
-21. A bank customer should be able to pay off their credit card bill.
-22. A bank administrator should be able to change a user's username and password.
-23. A bank customer should be able to apply for a loan with their full name, date of birth, income, loan amount, and duration of loan.
-24. A bank customer should be able to see if their requested loan was approved or denied soon after submitting a loan request.
-25. A bank customer should be able to choose an account to deposit an approved loan amount.
-26. A bank administrator should be able to unfreeze a bank account.
-27. A bank administrator should be able to freeze any account, preventing withdrawals and transfers.
+20. A bank customer should be able to apply for a loan with their full name, date of birth, income, loan amount, and duration of loan. (Tanuja)
+21. A bank customer should be able to see if their requested loan was approved or denied soon after submitting a loan request. (Tanuja)
+22. A bank administrator should be able to log in with a valid employee ID and password. (Jennifer)
+23. A bank administrator can see all the customers at the bank. (Jennifer)
+24. A bank customer should be able to choose an account to deposit an approved loan amount. (Grace)
+25. A bank customer should be able to transfer funds to another bank customer's primary account. (Grace)
+26. A bank administrator should be able to unfreeze a bank account. (Jordan)
+27. A bank administrator should be able to freeze any account, preventing withdrawals and transfers. (Jordan)
+
+## What user stories do you intend to complete next iteration?
+N/A. Iteration 3 is the last!
 
 ## Is there anything that you implemented but doesn't currently work?
 From our testing, everything works, but we look forward to receiving feedback.
 
 ## What commands are needed to compile and run your code from the command line?
-./runApp.sh <br><br>
-which contains the commands <br>
-cd src <br>
-javac main/*.java && java main.StartupPage
+
+To access admin
+- username: admin
+- password: adminpass
+
+To run program:
+- ./runApp.sh
+
+Which contains the commands
+- cd src
+- javac main/*.java && java main.StartupPage
