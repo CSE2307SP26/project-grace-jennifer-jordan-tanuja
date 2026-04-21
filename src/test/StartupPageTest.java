@@ -103,6 +103,48 @@ public class StartupPageTest {
     }
 
     @Test
+    public void testAdminLoginSuccessful() {
+        String input = "admin\nadminpass\n";
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(output));
+
+        StartupPage startup = new StartupPage();
+        startup.loginAdmin();
+
+        assertTrue(output.toString().contains("Admin login successful."));
+    }
+
+    @Test
+    public void testAdminLoginFailsWrongPassword() {
+        String input = "admin\nwrongpass\n";
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(output));
+
+        StartupPage startup = new StartupPage();
+        startup.loginAdmin();
+
+        assertTrue(output.toString().contains("Invalid employee ID or password."));
+    }
+
+    @Test
+    public void testAdminLoginFailsInvalidId() {
+        String input = "fakeadmin\nadminpass\n";
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(output));
+
+        StartupPage startup = new StartupPage();
+        startup.loginAdmin();
+
+        assertTrue(output.toString().contains("Invalid employee ID or password."));
+    }
+
+    @Test
     public void testDisplayOptionsPrintsMenu() {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         System.setOut(new PrintStream(output));

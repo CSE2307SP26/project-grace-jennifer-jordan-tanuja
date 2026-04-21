@@ -11,6 +11,7 @@ import org.junit.After;
 import org.junit.Test;
 
 import main.BankAccount;
+import main.BankAdministrator;
 import main.BankAdministratorMenu;
 import main.UserProfile;
 
@@ -37,7 +38,8 @@ public class BankAdministratorMenuTest {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         System.setOut(new PrintStream(output));
 
-        BankAdministratorMenu menu = new BankAdministratorMenu(accounts, users);
+        BankAdministrator admin = new BankAdministrator("admin", "pass");
+        BankAdministratorMenu menu = new BankAdministratorMenu(admin, accounts, users);
         menu.run();
 
         String printed = output.toString();
