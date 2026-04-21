@@ -138,7 +138,7 @@ public class StartupPage {
                 case 2:
                     UserProfile loggedInUser = login();
                     if (loggedInUser != null) {
-                        MainMenu menu = new MainMenu(loggedInUser);
+                        MainMenu menu = new MainMenu(loggedInUser, users);
                         menu.run();
                     }
                     break;
