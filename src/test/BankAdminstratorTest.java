@@ -4,6 +4,8 @@ import main.BankAccount;
 import main.BankAdministrator;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import org.junit.jupiter.api.Test;
@@ -11,6 +13,18 @@ import java.util.HashMap;
 
 public class BankAdminstratorTest {
     String pin = "000000";
+
+    @Test
+    public void testCheckPasswordCorrect() {
+        BankAdministrator admin = new BankAdministrator("admin", "adminpass");
+        assertTrue(admin.checkPassword("adminpass"));
+    }
+
+    @Test
+    public void testCheckPasswordIncorrect() {
+        BankAdministrator admin = new BankAdministrator("admin", "adminpass");
+        assertFalse(admin.checkPassword("wrongpass"));
+    }
 
     @Test
     public void testCollectFees() {

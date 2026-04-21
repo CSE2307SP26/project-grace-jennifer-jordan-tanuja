@@ -4,6 +4,18 @@ import java.util.HashMap;
 
 public class BankAdministrator {
 
+    private String employeeId;
+    private String password;
+
+    public BankAdministrator(String employeeId, String password) {
+        this.employeeId = employeeId;
+        this.password = password;
+    }
+
+    public boolean checkPassword(String password) {
+        return this.password.equals(password);
+    }
+
     public void collectFees(BankAccount account, double fee) {
         if (fee < 0) {
             throw new IllegalArgumentException();

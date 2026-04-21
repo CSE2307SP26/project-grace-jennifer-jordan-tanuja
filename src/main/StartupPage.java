@@ -7,10 +7,14 @@ public class StartupPage {
 
     private Scanner keyboardInput;
     private HashMap<String, UserProfile> users;
+    private HashMap<String, BankAdministrator> admins;
 
     public StartupPage() {
         this.keyboardInput = new Scanner(System.in);
         this.users = new HashMap<>();
+        this.admins = new HashMap<>();
+        // Add a default admin for login
+        this.admins.put("admin", new BankAdministrator("admin", "adminpass"));
     }
 
     public void displayOptions() {
@@ -104,6 +108,22 @@ public class StartupPage {
         }
     }
 
+    public BankAdministrator loginAdmin() {
+        System.out.print("Enter your employee ID: ");
+        String employeeId = keyboardInput.next();
+
+        System.out.print("Enter your password: ");
+        String password = keyboardInput.next();
+
+        if (admins.containsKey(employeeId) && admins.get(employeeId).checkPassword(password)) {
+            System.out.println("Admin login successful.");
+            return admins.get(employeeId);
+        } else {
+            System.out.println("Invalid employee ID or password.");
+            return null;
+        }
+    }
+
     public void run() {
         int selection = -1;
 
@@ -123,12 +143,15 @@ public class StartupPage {
                     }
                     break;
                 case 3:
-                    HashMap<String, BankAccount> allAccounts = new HashMap<>();
-                    for (UserProfile user : users.values()) {
-                        allAccounts.putAll(user.getAccounts());
+                    BankAdministrator loggedInAdmin = loginAdmin();
+                    if (loggedInAdmin != null) {
+                        HashMap<String, BankAccount> allAccounts = new HashMap<>();
+                        for (UserProfile user : users.values()) {
+                            allAccounts.putAll(user.getAccounts());
+                        }
+                        BankAdministratorMenu adminMenu = new BankAdministratorMenu(loggedInAdmin, allAccounts, users);
+                        adminMenu.run();
                     }
-                    BankAdministratorMenu adminMenu = new BankAdministratorMenu(allAccounts, users);
-                    adminMenu.run();
                     break;
                 case 4:
                     System.out.println("Exiting app.");

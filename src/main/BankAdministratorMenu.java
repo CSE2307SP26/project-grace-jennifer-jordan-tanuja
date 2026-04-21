@@ -8,8 +8,10 @@ public class BankAdministratorMenu {
     private HashMap<String, BankAccount> allAccounts;
     private HashMap<String, UserProfile> allUsers;
     private Scanner keyboardInput;
+    private BankAdministrator admin;
 
-    public BankAdministratorMenu(HashMap<String, BankAccount> allAccounts, HashMap<String, UserProfile> allUsers) {
+    public BankAdministratorMenu(BankAdministrator admin, HashMap<String, BankAccount> allAccounts, HashMap<String, UserProfile> allUsers) {
+        this.admin = admin;
         this.allAccounts = allAccounts;
         this.allUsers = allUsers;
         this.keyboardInput = new Scanner(System.in);
@@ -79,8 +81,7 @@ public class BankAdministratorMenu {
         System.out.print("Please enter the fee amount: ");
         try {
             double fee = keyboardInput.nextDouble();
-            BankAdministrator admin = new BankAdministrator();
-            admin.collectFees(allAccounts.get(accountName), fee);
+            this.admin.collectFees(allAccounts.get(accountName), fee);
             System.out.println("Fee collected.");
         } catch (Exception e) {
             System.out.println("Invalid fee amount. Fee collection failed.");
@@ -99,8 +100,7 @@ public class BankAdministratorMenu {
         System.out.print("Please enter the interest rate as a percentage: ");
         try {
             double percentageRate = keyboardInput.nextDouble();
-            BankAdministrator admin = new BankAdministrator();
-            admin.addInterestPayment(allAccounts.get(accountName), percentageRate);
+            this.admin.addInterestPayment(allAccounts.get(accountName), percentageRate);
             System.out.println("Interest payment added.");
         } catch (Exception e) {
             System.out.println("Invalid interest rate. Interest payment failed.");
@@ -111,8 +111,7 @@ public class BankAdministratorMenu {
         System.out.print("Please enter the interest rate as a percentage: ");
         try {
             double percentageRate = keyboardInput.nextDouble();
-            BankAdministrator admin = new BankAdministrator();
-            admin.addInterestPaymentAllAccounts(allAccounts, percentageRate);
+            this.admin.addInterestPaymentAllAccounts(allAccounts, percentageRate);
             System.out.println("Interest payment added.");
         } catch (Exception e) {
             System.out.println("Invalid interest rate. Interest payment failed.");
