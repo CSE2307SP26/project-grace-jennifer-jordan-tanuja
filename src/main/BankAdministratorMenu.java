@@ -26,29 +26,6 @@ public class BankAdministratorMenu {
         System.out.println("5. Exit");
     }
 
-    public int getUserSelection(int max) {
-        int selection = -1;
-
-        while (selection < 1 || selection > max) {
-            System.out.print("Please make a selection: ");
-
-            if (keyboardInput.hasNextInt()) {
-                selection = keyboardInput.nextInt();
-
-                if (selection < 1 || selection > max) {
-                    System.out.println("This input is invalid. Please select a number from 1-" + max);
-                }
-            } else {
-
-                keyboardInput.next();
-                System.out.println("This input is invalid. Please select a number from 1-" + max);
-            }
-        }
-
-        return selection;
-    }
-
-
      public void processInput(int selection) {
         switch (selection) {
             case 1:
@@ -134,7 +111,7 @@ public class BankAdministratorMenu {
          int selection = -1;
          while (selection != 5) {
             displayOptions();
-            selection = getUserSelection(5);
+            selection = InputValidator.getUserSelection(keyboardInput, 5);
             processInput(selection);
         }
         
