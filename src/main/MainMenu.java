@@ -5,8 +5,9 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
-public class MainMenu {
 
+
+public class MainMenu {
     private static final int EXIT_SELECTION = 6;
     private static final int MAX_SELECTION = 6;
 
@@ -207,9 +208,30 @@ public class MainMenu {
         int duration = InputValidator.getValidInt(keyboardInput, "Please enter the duration of the loan in months: ", "Loan duration");
 
         System.out.println("Loan application submitted successfully.");
-        System.out.println(LoanService.evaluateLoanDecision(currentUser, income, loanAmt, duration, allAccounts.get("primary")));
+        String decision= LoanService.evaluateLoanDecision(currentUser, income, loanAmt, duration, allAccounts.get("primary"));
+        System.out.println(decision);
+      
+        if (decision.equals("Loan Approved!")) {
+            chooseAccountToDepositLoan(loanAmt);
+        }
     }
 
+    public void chooseAccountToDepositLoan(double loanAmount) {
+        System.out.println("Choose an account to deposit your approved loan");
+        showAccountOptions();
+
+        String accountSelection = null;
+        while (!currentUser.getAccountNames().contains(accountSelection)) {
+            if (accountSelection != null) {
+                System.out.println("Invalid account selection. Choose from your existing accounts");
+            }
+            accountSelection = keyboardInput.next();
+        }
+
+        currentUser.getAccounts().get(accountSelection).deposit(loanAmount);
+        System.out.println("Successfully deposited loan to " + accountSelection);
+    }
+ 
     public Set<String> getAllAccountNames() {
         return allAccounts.keySet();
     }

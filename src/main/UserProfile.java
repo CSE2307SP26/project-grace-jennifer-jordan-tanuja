@@ -1,6 +1,7 @@
 package main;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class UserProfile {
@@ -47,5 +48,15 @@ public class UserProfile {
 
     public Set<String> getAccountNames() {
         return this.accounts.keySet();
+    }
+
+    public double getBalanceAcrossAllAccounts() {
+        double totalBalance = 0;
+
+        for (Map.Entry<String, BankAccount> accountEntry : accounts.entrySet()) {
+            totalBalance += accountEntry.getValue().getBalance();
+        }
+        
+        return totalBalance;
     }
 }
