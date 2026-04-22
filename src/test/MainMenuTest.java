@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import org.junit.After;
@@ -28,8 +29,13 @@ public class MainMenuTest {
   }
 
   private MainMenu createMenu() {
+    HashMap<String, UserProfile> allUsers = new HashMap<>();
     UserProfile user = new UserProfile("testUser", "testPass", "test@email.com", "01/01/1990", "000000");
-    return new MainMenu(user);
+    UserProfile user2 = new UserProfile("testUser2", "testPass", "test@email.com", "01/01/1990", "000000");
+    allUsers.put("testUser", user);
+    allUsers.put("testUser2", user2);
+
+    return new MainMenu(user, allUsers);
   }
 
   @Test
@@ -257,6 +263,22 @@ public class MainMenuTest {
 
     assertTrue(output.toString().contains("Transfer failed."));
     assertEquals(new HashSet<>(Arrays.asList("primary", "savings")), menu.getAllAccountNames());
+  }
+
+  @Test
+  public void testTransferMoneyToAnotherUserSuccessfully() {
+    String input = "\ntestUser2\nprimary\n50\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+
+    menu.getAccounts().get("primary").deposit(100);
+    menu.transferToAnotherUser();
+
+    assertTrue(output.toString().contains("Transfer successful"));
   }
 
   @Test

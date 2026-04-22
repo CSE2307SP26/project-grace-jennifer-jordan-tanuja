@@ -8,15 +8,17 @@ import java.util.Set;
 
 
 public class MainMenu {
-    private static final int EXIT_SELECTION = 6;
-    private static final int MAX_SELECTION = 6;
+    private static final int EXIT_SELECTION = 7;
+    private static final int MAX_SELECTION = 7;
 
     private UserProfile currentUser;
     private HashMap<String, BankAccount> allAccounts;
+    private HashMap<String, UserProfile> allUsers;
     private Scanner keyboardInput;
 
-    public MainMenu(UserProfile user) {
+    public MainMenu(UserProfile user, HashMap<String, UserProfile> allUsers) {
         this.currentUser = user;
+        this.allUsers = allUsers;
         this.allAccounts = user.getAccounts();
         this.keyboardInput = new Scanner(System.in);
     }
@@ -29,8 +31,9 @@ public class MainMenu {
         System.out.println("2. Create an additional account");
         System.out.println("3. Close an existing account");
         System.out.println("4. Transfer money from one account to another");
-        System.out.println("5. Apply for a loan");
-        System.out.println("6. Exit");
+        System.out.println("5. Transfer money to another user in the system");
+        System.out.println("6. Apply for a loan");
+        System.out.println("7. Exit");
     }
 
     public HashMap<String, BankAccount> getAccounts() {
@@ -52,6 +55,9 @@ public class MainMenu {
                 transferBetweenAccounts();
                 break;
             case 5:
+                transferToAnotherUser();
+                break;
+            case 6:
                 applyForLoan();
                 break;
             default:
@@ -187,6 +193,47 @@ public class MainMenu {
         try {
             allAccounts.get(source).withdraw(amount);
             allAccounts.get(dest).deposit(amount);
+            System.out.println("Transfer successful.");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Transfer failed. Make sure the amount is valid and the source account has enough funds.");
+        }
+    }
+
+    public void showAllUsersInSystem() {
+        System.out.println("Existing users in the system:");
+        for (Map.Entry<String, UserProfile> entry : allUsers.entrySet()) {
+            if (!entry.getKey().equals(currentUser.getUsername())) {
+                System.out.println("- " + entry.getKey());
+            }
+        }
+    }
+
+    public void transferToAnotherUser() {
+        showAllUsersInSystem();
+        keyboardInput.nextLine(); // consume leftover newline
+
+        System.out.print("Enter the username of the user you would like to transfer to: ");
+        String targetUsername = keyboardInput.nextLine();
+
+        if (!allUsers.containsKey(targetUsername)) {
+            System.out.println(targetUsername + " does not exist in our system. Transfer failed.");
+            return;
+        }
+
+        System.out.print("Enter name of the account you are pulling money from: ");
+        String sourceAccountName = keyboardInput.next();
+
+        if (!allAccounts.containsKey(sourceAccountName)) {
+            System.out.println("Source account does not exist. Transfer failed.");
+            return;
+        }
+
+        System.out.print("Enter the amount to transfer: ");
+        double amount = keyboardInput.nextDouble();
+
+        try {
+            allAccounts.get(sourceAccountName).withdraw(amount);
+            allUsers.get(targetUsername).getAccounts().get("primary").deposit(amount);
             System.out.println("Transfer successful.");
         } catch (IllegalArgumentException e) {
             System.out.println("Transfer failed. Make sure the amount is valid and the source account has enough funds.");

@@ -133,7 +133,7 @@ public class StartupPage {
     private void handleLogin() {
         UserProfile loggedInUser = login();
         if (loggedInUser != null) {
-            new MainMenu(loggedInUser).run();
+            new MainMenu(loggedInUser, users).run();
         }
     }
 
