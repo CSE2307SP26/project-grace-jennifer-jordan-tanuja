@@ -15,7 +15,7 @@ public class AccountAdministrationMenu {
         this.account = account;
         this.keyboardInput = keyboardInput;
     }
-    
+
     public void displayOptions() {
         System.out.println("Currently in account " + accountName);
         System.out.println("What do you wish to do today?");
@@ -61,6 +61,10 @@ public class AccountAdministrationMenu {
     }
 
     public void performWithdraw() {
+        if (account.isFrozen()) {
+            System.out.println("Account is frozen. Withdrawal failed.");
+            return;
+        }
         double withdrawAmount = -1;
         while (withdrawAmount < 0) {
             System.out.print("How much would you like to withdraw: ");
@@ -95,7 +99,7 @@ public class AccountAdministrationMenu {
 
         String pin = InputValidator.getValidPin(keyboardInput, "Enter a 6 digit pin number for your account: ");
         account.changePin(pin);
-        
+
         System.out.println("Successfully changed pin number for account " + accountName + ".");
     }
 

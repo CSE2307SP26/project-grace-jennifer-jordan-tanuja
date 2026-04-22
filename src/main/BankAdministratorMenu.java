@@ -10,23 +10,25 @@ public class BankAdministratorMenu {
     private Scanner keyboardInput;
     private BankAdministrator admin;
 
-    public BankAdministratorMenu(BankAdministrator admin, HashMap<String, BankAccount> allAccounts, HashMap<String, UserProfile> allUsers) {
+    public BankAdministratorMenu(BankAdministrator admin, HashMap<String, BankAccount> allAccounts,
+            HashMap<String, UserProfile> allUsers) {
         this.admin = admin;
         this.allAccounts = allAccounts;
         this.allUsers = allUsers;
         this.keyboardInput = new Scanner(System.in);
     }
 
-     public void displayOptions() {
+    public void displayOptions() {
         System.out.println("What do you wish to do today?");
         System.out.println("1. [Bank Admin] Collect fees");
         System.out.println("2. [Bank Admin] Add an interest payment");
         System.out.println("3. [Bank Admin] Add an interest payment to all savings accounts");
         System.out.println("4. [Bank Admin] View all customers");
-        System.out.println("5. Exit");
+        System.out.println("5. [Bank Admin] Freeze an account");
+        System.out.println("6. Exit");
     }
 
-     public void processInput(int selection) {
+    public void processInput(int selection) {
         switch (selection) {
             case 1:
                 adminCollectFees();
@@ -40,12 +42,14 @@ public class BankAdministratorMenu {
             case 4:
                 viewAllCustomers();
                 break;
+            case 5:
+                adminFreezeAccount();
+                break;
             default:
                 break;
         }
     }
 
-    
     public void adminCollectFees() {
         System.out.print("Please enter the name of the account you want to collect fees from: ");
         String accountName = keyboardInput.next();
@@ -84,7 +88,7 @@ public class BankAdministratorMenu {
         }
     }
 
-    public void adminInterestPaymentsAllAccounts(){
+    public void adminInterestPaymentsAllAccounts() {
         System.out.print("Please enter the interest rate as a percentage: ");
         try {
             double percentageRate = keyboardInput.nextDouble();
@@ -108,13 +112,35 @@ public class BankAdministratorMenu {
     }
 
     public void run() {
-         int selection = -1;
-         while (selection != 5) {
+        int selection = -1;
+        while (selection != 6) {
             displayOptions();
-            selection = InputValidator.getUserSelection(keyboardInput, 5);
+            selection = InputValidator.getUserSelection(keyboardInput, 6);
             processInput(selection);
         }
-        
+
     }
-    
+
+    public void adminFreezeAccount() {
+        System.out.print("Enter username that owns the account to freeze: ");
+        String username = keyboardInput.next();
+
+        if (!allUsers.containsKey(username)) {
+            System.out.println("This user does not exist.");
+            return;
+        }
+
+        System.out.print("Enter account name to freeze: ");
+        String accountName = keyboardInput.next();
+
+        HashMap<String, BankAccount> userAccounts = allUsers.get(username).getAccounts();
+        if (!userAccounts.containsKey(accountName)) {
+            System.out.println("This account does not exist for that user.");
+            return;
+        }
+
+        admin.freezeAccount(userAccounts.get(accountName));
+        System.out.println("Account " + username + ":" + accountName + " is now frozen.");
+    }
+
 }

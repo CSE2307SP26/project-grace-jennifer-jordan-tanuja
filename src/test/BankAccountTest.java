@@ -4,11 +4,10 @@ import main.BankAccount;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
-
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 
 public class BankAccountTest {
@@ -106,6 +105,20 @@ public class BankAccountTest {
     public void testVerifyPinEmptyPinEntered() {
         BankAccount testAccount = new BankAccount("checking", "123456");
         assertTrue(!testAccount.verifyPin(""));
+    }
+
+    @Test
+    public void testFreezeBlocksWithdraw() {
+        BankAccount testAccount = new BankAccount("checking", pin);
+        testAccount.deposit(100);
+        testAccount.freeze();
+
+        try {
+            testAccount.withdraw(10);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertEquals(100, testAccount.getBalance(), 0.01);
+        }
     }
 
 }

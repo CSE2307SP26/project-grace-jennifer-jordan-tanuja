@@ -421,7 +421,7 @@ public class MainMenuTest {
     assertTrue(printed.contains("Loan Denied: Monthly payment would be too high based on your income."));
   }
 
-  @Test 
+  @Test
   public void testLoanWasDepositedToSelectedAccount() {
     String input = "\nJohn Doe\n01/01/1990\n50000\n10000\n36\nprimary\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
@@ -437,5 +437,22 @@ public class MainMenuTest {
     assertTrue(printed.contains("Loan application submitted successfully."));
     assertTrue(printed.contains("Loan Approved!"));
     assertTrue(printed.contains("Successfully deposited loan to primary"));
+  }
+
+  @Test
+  public void testTransferFailsWhenSourceAccountFrozen() {
+    String input = "John Doe\n01/01/1990\nsavings\nsavings\n000000\nprimary\nsavings\n40\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+    menu.createAdditionalAccount();
+    menu.getAccounts().get("primary").deposit(100);
+    menu.getAccounts().get("primary").freeze();
+    menu.transferBetweenAccounts();
+
+    assertTrue(output.toString().contains("Source account is frozen. Transfer failed."));
   }
 }
