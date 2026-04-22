@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
 
-
-
 public class MainMenu {
     private static final int EXIT_SELECTION = 7;
     private static final int MAX_SELECTION = 7;
@@ -103,7 +101,7 @@ public class MainMenu {
     }
 
     public void createAdditionalAccount() {
-        String fullName = getFullName();
+        getFullName();
         if (!promptAndValidateBirthday()) {
             System.out.println("Account creation failed.");
             return;
@@ -183,6 +181,16 @@ public class MainMenu {
             return;
         }
 
+        if (allAccounts.get(sourceAccountName).isFrozen()) {
+            System.out.println("Source account is frozen. Transfer failed.");
+            return;
+        }
+
+        if (allAccounts.get(destinationAccountName).isFrozen()) {
+            System.out.println("Destination account is frozen. Transfer failed.");
+            return;
+        }
+
         executeTransfer(sourceAccountName, destinationAccountName);
     }
 
@@ -195,7 +203,8 @@ public class MainMenu {
             allAccounts.get(dest).deposit(amount);
             System.out.println("Transfer successful.");
         } catch (IllegalArgumentException e) {
-            System.out.println("Transfer failed. Make sure the amount is valid and the source account has enough funds.");
+            System.out
+                    .println("Transfer failed. Make sure the amount is valid and the source account has enough funds.");
         }
     }
 
@@ -220,6 +229,12 @@ public class MainMenu {
             return;
         }
 
+        BankAccount targetPrimary = allUsers.get(targetUsername).getAccounts().get("primary");
+        if (targetPrimary.isFrozen()) {
+            System.out.println("Destination account is frozen. Transfer failed.");
+            return;
+        }
+
         System.out.print("Enter name of the account you are pulling money from: ");
         String sourceAccountName = keyboardInput.next();
 
@@ -228,15 +243,21 @@ public class MainMenu {
             return;
         }
 
+        if (allAccounts.get(sourceAccountName).isFrozen()) {
+            System.out.println("Source account is frozen. Transfer failed.");
+            return;
+        }
+
         System.out.print("Enter the amount to transfer: ");
         double amount = keyboardInput.nextDouble();
 
         try {
             allAccounts.get(sourceAccountName).withdraw(amount);
-            allUsers.get(targetUsername).getAccounts().get("primary").deposit(amount);
+            targetPrimary.deposit(amount);
             System.out.println("Transfer successful.");
         } catch (IllegalArgumentException e) {
-            System.out.println("Transfer failed. Make sure the amount is valid and the source account has enough funds.");
+            System.out
+                    .println("Transfer failed. Make sure the amount is valid and the source account has enough funds.");
         }
     }
 
@@ -251,13 +272,15 @@ public class MainMenu {
         }
 
         double income = InputValidator.getValidDouble(keyboardInput, "Please enter your annual income: ", "Income");
-        double loanAmt = InputValidator.getValidDouble(keyboardInput, "Please enter the loan amount requested: ", "Loan amount");
-        int duration = InputValidator.getValidInt(keyboardInput, "Please enter the duration of the loan in months: ", "Loan duration");
+        double loanAmt = InputValidator.getValidDouble(keyboardInput, "Please enter the loan amount requested: ",
+                "Loan amount");
+        int duration = InputValidator.getValidInt(keyboardInput, "Please enter the duration of the loan in months: ",
+                "Loan duration");
 
         System.out.println("Loan application submitted successfully.");
-        String decision= LoanService.evaluateLoanDecision(currentUser, income, loanAmt, duration, allAccounts.get("primary"));
+        String decision = LoanService.evaluateLoanDecision(currentUser, income, loanAmt, duration);
         System.out.println(decision);
-      
+
         if (decision.equals("Loan Approved!")) {
             chooseAccountToDepositLoan(loanAmt);
         }
@@ -265,7 +288,7 @@ public class MainMenu {
 
     public void chooseAccountToDepositLoan(double loanAmount) {
         System.out.println("Choose an account to deposit your approved loan");
-        showAccountOptions();
+        displayOptions();
 
         String accountSelection = null;
         while (!currentUser.getAccountNames().contains(accountSelection)) {
@@ -278,7 +301,7 @@ public class MainMenu {
         currentUser.getAccounts().get(accountSelection).deposit(loanAmount);
         System.out.println("Successfully deposited loan to " + accountSelection);
     }
- 
+
     public Set<String> getAllAccountNames() {
         return allAccounts.keySet();
     }

@@ -12,6 +12,10 @@ public class BankAdministrator {
         this.password = password;
     }
 
+    public String getEmployeeId() {
+        return employeeId;
+    }
+
     public boolean checkPassword(String password) {
         return this.password.equals(password);
     }
@@ -50,6 +54,13 @@ public class BankAdministrator {
                 }
             }
         }
+    }
+
+    public void freezeAccount(BankAccount account) {
+        if (account == null) {
+            throw new IllegalArgumentException();
+        }
+        account.freeze();
     }
 
 }

@@ -9,19 +9,21 @@ public class BankAccount {
     private List<Double> transaction_history;
     private String account_type;
     private String pin;
+    private boolean frozen;
 
     public BankAccount(String account_type, String pin) {
         this.balance = 0;
         this.transaction_history = new ArrayList<Double>();
         this.account_type = account_type;
         this.pin = pin;
+        this.frozen = false;
     }
 
     public void changePin(String newPin) {
         this.pin = newPin;
     }
 
-    public boolean verifyPin(String enteredPin){
+    public boolean verifyPin(String enteredPin) {
         return this.pin.equals(enteredPin);
     }
 
@@ -35,6 +37,9 @@ public class BankAccount {
     }
 
     public void withdraw(double amount) {
+        if (this.frozen) {
+            throw new IllegalArgumentException();
+        }
         if (amount < 0 || amount > this.balance) {
             throw new IllegalArgumentException();
         } else {
@@ -62,5 +67,13 @@ public class BankAccount {
 
     public String getAccountType() {
         return this.account_type;
+    }
+
+    public void freeze() {
+        this.frozen = true;
+    }
+
+    public boolean isFrozen() {
+        return this.frozen;
     }
 }
