@@ -278,28 +278,27 @@ public class MainMenu {
                 "Loan duration");
 
         System.out.println("Loan application submitted successfully.");
-        String decision = LoanService.evaluateLoanDecision(currentUser, income, loanAmt, duration);
-        System.out.println(decision);
+        String loanDecision = LoanService.evaluateLoanDecision(currentUser, income, loanAmt, duration);
+        System.out.println(loanDecision);
 
-        if (decision.equals("Loan Approved!")) {
+        if (loanDecision.equals("Loan Approved!")) {
             chooseAccountToDepositLoan(loanAmt);
         }
     }
 
     public void chooseAccountToDepositLoan(double loanAmount) {
-        System.out.println("Choose an account to deposit your approved loan");
-        displayOptions();
+        System.out.println("Choose an account to deposit your approved loan into:");
+        displayAccounts();
 
-        String accountSelection = null;
-        while (!currentUser.getAccountNames().contains(accountSelection)) {
-            if (accountSelection != null) {
-                System.out.println("Invalid account selection. Choose from your existing accounts");
-            }
+        System.out.print("Please enter the name of the account: ");
+        String accountSelection = keyboardInput.next();
+        while (!allAccounts.containsKey(accountSelection)) {
+            System.out.println("Invalid account selection. Please choose from your existing accounts");
+            System.out.print("Please enter the name of the account: ");
             accountSelection = keyboardInput.next();
         }
-
-        currentUser.getAccounts().get(accountSelection).deposit(loanAmount);
-        System.out.println("Successfully deposited loan to " + accountSelection);
+        allAccounts.get(accountSelection).deposit(loanAmount);
+        System.out.println(String.format("Successfully deposited loan of $%.2f to %s.", loanAmount, accountSelection));
     }
 
     public Set<String> getAllAccountNames() {
