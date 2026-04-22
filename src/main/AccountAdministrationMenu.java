@@ -27,28 +27,6 @@ public class AccountAdministrationMenu {
         System.out.println("6. Exit");
     }
 
-    public int getUserSelection(int max) {
-        int selection = -1;
-
-        while (selection < 1 || selection > max) {
-            System.out.print("Please make a selection: ");
-
-            if (keyboardInput.hasNextInt()) {
-                selection = keyboardInput.nextInt();
-
-                if (selection < 1 || selection > max) {
-                    System.out.println("This input is invalid. Please select a number from 1-" + max);
-                }
-            } else {
-
-                keyboardInput.next();
-                System.out.println("This input is invalid. Please select a number from 1-" + max);
-            }
-        }
-
-        return selection;
-    }
-
     public void processInput(int selection) {
         switch (selection) {
             case 1:
@@ -115,13 +93,7 @@ public class AccountAdministrationMenu {
             return;
         }
 
-        System.out.print("Enter a 6 digit pin number for your account: ");
-        String pin = keyboardInput.next();
-
-        while (pin.length() != 6 || !pin.matches("\\d{6}")) {
-            System.out.print("Pin number must have 6 numerical digits. Enter a valid pin number: ");
-            pin = keyboardInput.next();
-        }
+        String pin = InputValidator.getValidPin(keyboardInput, "Enter a 6 digit pin number for your account: ");
         account.changePin(pin);
         
         System.out.println("Successfully changed pin number for account " + accountName + ".");
@@ -131,7 +103,7 @@ public class AccountAdministrationMenu {
         int selection = -1;
         while (selection != 6) {
             displayOptions();
-            selection = getUserSelection(6);
+            selection = InputValidator.getUserSelection(keyboardInput, 6);
             processInput(selection);
         }
     }
