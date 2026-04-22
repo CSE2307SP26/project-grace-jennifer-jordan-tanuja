@@ -214,7 +214,7 @@ public class BankAdminstratorTest {
         HashMap<String, UserProfile> users = new HashMap<>();
         users.put("alice", new UserProfile("alice", "pass", "123456"));
 
-        String input = "5\ncharlie\n6\n";
+        String input = "5\ncharlie\n7\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         System.setOut(new PrintStream(output));
@@ -234,7 +234,7 @@ public class BankAdminstratorTest {
         UserProfile alice = new UserProfile("alice", "pass", "123456");
         users.put("alice", alice);
 
-        String input = "5\nalice\nprimary\n6\n";
+        String input = "5\nalice\nprimary\n7\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         System.setOut(new PrintStream(output));
@@ -254,7 +254,7 @@ public class BankAdminstratorTest {
         UserProfile alice = new UserProfile("alice", "pass", "123456");
         users.put("alice", alice);
 
-        String input = "5\nalice\nsavings\n6\n";
+        String input = "5\nalice\nsavings\n7\n";
         System.setIn(new ByteArrayInputStream(input.getBytes()));
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         System.setOut(new PrintStream(output));
@@ -280,6 +280,150 @@ public class BankAdminstratorTest {
             fail();
         } catch (IllegalArgumentException e) {
             // expected
+        }
+    }
+
+    @Test
+    public void testAdminCanUnfreezeAccount() {
+        BankAccount testAccount = new BankAccount("checking", pin);
+        BankAdministrator admin = new BankAdministrator("admin", "adminpass");
+
+        admin.freezeAccount(testAccount);
+        assertTrue(testAccount.isFrozen());
+
+        admin.unfreezeAccount(testAccount);
+        assertFalse(testAccount.isFrozen());
+    }
+
+    @Test
+    public void testUnfreezeAccountNullThrows() {
+        BankAdministrator admin = new BankAdministrator("admin", "adminpass");
+        try {
+            admin.unfreezeAccount(null);
+            fail();
+        } catch (IllegalArgumentException e) {
+            // do nothing, test passes
+        }
+    }
+
+    @Test
+    public void testUnfreezeAccountValidUsernameAndAccountFromMenu() {
+        HashMap<String, BankAccount> accounts = new HashMap<>();
+        HashMap<String, UserProfile> users = new HashMap<>();
+        UserProfile alice = new UserProfile("alice", "pass", "123456");
+        users.put("alice", alice);
+        alice.getAccounts().get("primary").freeze();
+
+        String input = "6\nalice\nprimary\n7\n";
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(output));
+
+        BankAdministrator admin = new BankAdministrator("admin", "pass");
+        BankAdministratorMenu menu = new BankAdministratorMenu(admin, accounts, users);
+        menu.run();
+
+        assertFalse(alice.getAccounts().get("primary").isFrozen());
+        assertTrue(output.toString().contains("is now unfrozen"));
+    }
+
+    @Test
+    public void testUnfrozenAccountCanWithdraw() {
+        BankAccount testAccount = new BankAccount("checking", pin);
+        BankAdministrator admin = new BankAdministrator("admin", "adminpass");
+        testAccount.deposit(100);
+
+        admin.freezeAccount(testAccount);
+        admin.unfreezeAccount(testAccount);
+
+        try {
+            testAccount.withdraw(20);
+            assertEquals(80, testAccount.getBalance(), 0.01);
+        } catch (IllegalArgumentException e) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testUnfreezeAccountInvalidUsername() {
+        HashMap<String, BankAccount> accounts = new HashMap<>();
+        HashMap<String, UserProfile> users = new HashMap<>();
+        users.put("alice", new UserProfile("alice", "pass", "123456"));
+
+        String input = "6\ncharlie\n7\n";
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(output));
+
+        BankAdministrator admin = new BankAdministrator("admin", "pass");
+        BankAdministratorMenu menu = new BankAdministratorMenu(admin, accounts, users);
+        menu.run();
+
+        String printed = output.toString();
+        assertTrue(printed.contains("This user does not exist."));
+    }
+
+    @Test
+    public void testUnfreezeAccountInvalidAccountNameForExistingUser() {
+        HashMap<String, BankAccount> accounts = new HashMap<>();
+        HashMap<String, UserProfile> users = new HashMap<>();
+        UserProfile alice = new UserProfile("alice", "pass", "123456");
+        users.put("alice", alice);
+        alice.getAccounts().get("primary").freeze();
+
+        String input = "6\nalice\nsavings\n7\n";
+        System.setIn(new ByteArrayInputStream(input.getBytes()));
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(output));
+
+        BankAdministrator admin = new BankAdministrator("admin", "pass");
+        BankAdministratorMenu menu = new BankAdministratorMenu(admin, accounts, users);
+        menu.run();
+
+        assertTrue(output.toString().contains("This account does not exist for that user."));
+        assertTrue(alice.getAccounts().get("primary").isFrozen());
+    }
+
+    @Test
+    public void testUnfreezeAccountThatIsNotFrozen() {
+        BankAccount testAccount = new BankAccount("checking", pin);
+        BankAdministrator admin = new BankAdministrator("admin", "adminpass");
+
+        admin.unfreezeAccount(testAccount);
+        assertFalse(testAccount.isFrozen());
+    }
+
+    @Test
+    public void testUnfreezeMultipleTimesIsSafe() {
+        BankAccount testAccount = new BankAccount("checking", pin);
+        BankAdministrator admin = new BankAdministrator("admin", "adminpass");
+
+        admin.freezeAccount(testAccount);
+        admin.unfreezeAccount(testAccount);
+        admin.unfreezeAccount(testAccount);
+
+        assertFalse(testAccount.isFrozen());
+    }
+
+    @Test
+    public void testUnfrozenAccountCanTransfer() {
+        BankAccount sourceAccount = new BankAccount("checking", pin);
+        BankAccount destAccount = new BankAccount("savings", pin);
+        BankAdministrator admin = new BankAdministrator("admin", "adminpass");
+
+        sourceAccount.deposit(100);
+        destAccount.deposit(50);
+
+        admin.freezeAccount(sourceAccount);
+        admin.unfreezeAccount(sourceAccount);
+
+        try {
+            sourceAccount.withdraw(30);
+            destAccount.deposit(30);
+            assertEquals(70, sourceAccount.getBalance(), 0.01);
+            assertEquals(80, destAccount.getBalance(), 0.01);
+        } catch (IllegalArgumentException e) {
+            fail();
         }
     }
 

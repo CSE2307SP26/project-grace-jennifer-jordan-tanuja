@@ -73,6 +73,10 @@ public class BankAccount {
         this.frozen = true;
     }
 
+    public void unfreeze() {
+        this.frozen = false;
+    }
+
     public boolean isFrozen() {
         return this.frozen;
     }
