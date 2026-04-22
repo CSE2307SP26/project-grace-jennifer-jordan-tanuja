@@ -63,4 +63,11 @@ public class BankAdministrator {
         account.freeze();
     }
 
+    public void unfreezeAccount(BankAccount account) {
+        if (account == null) {
+            throw new IllegalArgumentException();
+        }
+        account.unfreeze();
+    }
+
 }

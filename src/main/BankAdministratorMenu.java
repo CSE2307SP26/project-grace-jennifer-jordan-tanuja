@@ -25,7 +25,8 @@ public class BankAdministratorMenu {
         System.out.println("3. [Bank Admin] Add an interest payment to all savings accounts");
         System.out.println("4. [Bank Admin] View all customers");
         System.out.println("5. [Bank Admin] Freeze an account");
-        System.out.println("6. Exit");
+        System.out.println("6. [Bank Admin] Unfreeze an account");
+        System.out.println("7. Exit");
     }
 
     public void processInput(int selection) {
@@ -44,6 +45,9 @@ public class BankAdministratorMenu {
                 break;
             case 5:
                 adminFreezeAccount();
+                break;
+            case 6:
+                adminUnfreezeAccount();
                 break;
             default:
                 break;
@@ -113,9 +117,9 @@ public class BankAdministratorMenu {
 
     public void run() {
         int selection = -1;
-        while (selection != 6) {
+        while (selection != 7) {
             displayOptions();
-            selection = InputValidator.getUserSelection(keyboardInput, 6);
+            selection = InputValidator.getUserSelection(keyboardInput, 7);
             processInput(selection);
         }
 
@@ -141,6 +145,28 @@ public class BankAdministratorMenu {
 
         admin.freezeAccount(userAccounts.get(accountName));
         System.out.println("Account " + username + ":" + accountName + " is now frozen.");
+    }
+
+    public void adminUnfreezeAccount() {
+        System.out.print("Enter username that owns the account to unfreeze: ");
+        String username = keyboardInput.next();
+
+        if (!allUsers.containsKey(username)) {
+            System.out.println("This user does not exist.");
+            return;
+        }
+
+        System.out.print("Enter account name to unfreeze: ");
+        String accountName = keyboardInput.next();
+
+        HashMap<String, BankAccount> userAccounts = allUsers.get(username).getAccounts();
+        if (!userAccounts.containsKey(accountName)) {
+            System.out.println("This account does not exist for that user.");
+            return;
+        }
+
+        admin.unfreezeAccount(userAccounts.get(accountName));
+        System.out.println("Account " + username + ":" + accountName + " is now unfrozen.");
     }
 
 }
