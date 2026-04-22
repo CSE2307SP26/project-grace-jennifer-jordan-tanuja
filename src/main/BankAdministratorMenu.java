@@ -126,47 +126,52 @@ public class BankAdministratorMenu {
     }
 
     public void adminFreezeAccount() {
-        System.out.print("Enter username that owns the account to freeze: ");
-        String username = keyboardInput.next();
-
-        if (!allUsers.containsKey(username)) {
-            System.out.println("This user does not exist.");
+        String username = getValidUsername("freeze");
+        if (username == null)
             return;
-        }
 
-        System.out.print("Enter account name to freeze: ");
-        String accountName = keyboardInput.next();
-
-        HashMap<String, BankAccount> userAccounts = allUsers.get(username).getAccounts();
-        if (!userAccounts.containsKey(accountName)) {
-            System.out.println("This account does not exist for that user.");
+        String accountName = getValidAccountName(username, "freeze");
+        if (accountName == null)
             return;
-        }
 
-        admin.freezeAccount(userAccounts.get(accountName));
+        admin.freezeAccount(allUsers.get(username).getAccounts().get(accountName));
         System.out.println("Account " + username + ":" + accountName + " is now frozen.");
     }
 
     public void adminUnfreezeAccount() {
-        System.out.print("Enter username that owns the account to unfreeze: ");
+        String username = getValidUsername("unfreeze");
+        if (username == null)
+            return;
+
+        String accountName = getValidAccountName(username, "unfreeze");
+        if (accountName == null)
+            return;
+
+        admin.unfreezeAccount(allUsers.get(username).getAccounts().get(accountName));
+        System.out.println("Account " + username + ":" + accountName + " is now unfrozen.");
+    }
+
+    private String getValidUsername(String action) {
+        System.out.print("Enter username that owns the account to " + action + ": ");
         String username = keyboardInput.next();
 
         if (!allUsers.containsKey(username)) {
             System.out.println("This user does not exist.");
-            return;
+            return null;
         }
+        return username;
+    }
 
-        System.out.print("Enter account name to unfreeze: ");
+    private String getValidAccountName(String username, String action) {
+        System.out.print("Enter account name to " + action + ": ");
         String accountName = keyboardInput.next();
 
         HashMap<String, BankAccount> userAccounts = allUsers.get(username).getAccounts();
         if (!userAccounts.containsKey(accountName)) {
             System.out.println("This account does not exist for that user.");
-            return;
+            return null;
         }
-
-        admin.unfreezeAccount(userAccounts.get(accountName));
-        System.out.println("Account " + username + ":" + accountName + " is now unfrozen.");
+        return accountName;
     }
 
 }
