@@ -17,7 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
 
-public class BankAdminstratorTest {
+public class BankAdministratorTest {
     String pin = "000000";
 
     @Test
