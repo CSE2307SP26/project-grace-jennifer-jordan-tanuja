@@ -320,6 +320,8 @@ public class MainMenuTest {
     String printed = output.toString();
     assertTrue(printed.contains("Loan application submitted successfully."));
     assertTrue(printed.contains("Loan Approved!"));
+    assertTrue(printed.contains("Successfully deposited loan of $10000.00 to primary."));
+    assertEquals(10000.0, menu.getAccounts().get("primary").getBalance(), 0.01);
   }
 
   @Test
@@ -353,6 +355,8 @@ public class MainMenuTest {
     assertTrue(printed.contains("Invalid input. Please enter a valid number for income."));
     assertTrue(printed.contains("Loan application submitted successfully."));
     assertTrue(printed.contains("Loan Approved!"));
+    assertTrue(printed.contains("Successfully deposited loan of $10000.00 to primary."));
+    assertEquals(10000.0, menu.getAccounts().get("primary").getBalance(), 0.01);
   }
 
   @Test
@@ -370,6 +374,8 @@ public class MainMenuTest {
     assertTrue(printed.contains("Invalid input. Please enter a valid number for loan amount."));
     assertTrue(printed.contains("Loan application submitted successfully."));
     assertTrue(printed.contains("Loan Approved!"));
+    assertTrue(printed.contains("Successfully deposited loan of $10000.00 to primary."));
+    assertEquals(10000.0, menu.getAccounts().get("primary").getBalance(), 0.01);
   }
 
   @Test
@@ -387,6 +393,8 @@ public class MainMenuTest {
     assertTrue(printed.contains("Invalid input. Please enter a valid whole number for loan duration."));
     assertTrue(printed.contains("Loan application submitted successfully."));
     assertTrue(printed.contains("Loan Approved!"));
+    assertTrue(printed.contains("Successfully deposited loan of $10000.00 to primary."));
+    assertEquals(10000.0, menu.getAccounts().get("primary").getBalance(), 0.01);
   }
 
   @Test
@@ -436,7 +444,8 @@ public class MainMenuTest {
     String printed = output.toString();
     assertTrue(printed.contains("Loan application submitted successfully."));
     assertTrue(printed.contains("Loan Approved!"));
-    assertTrue(printed.contains("Successfully deposited loan to primary"));
+    assertTrue(printed.contains("Successfully deposited loan of $10000.00 to primary"));
+    assertEquals(10000.0, menu.getAccounts().get("primary").getBalance(), 0.01);
   }
 
   @Test
