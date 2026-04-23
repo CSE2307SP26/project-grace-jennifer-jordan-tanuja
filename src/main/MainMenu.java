@@ -1,21 +1,22 @@
 package main;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.Map;
 
 public class MainMenu {
-
-    private static final int EXIT_SELECTION = 5;
-    private static final int MAX_SELECTION = 5;
+    private static final int EXIT_SELECTION = 7;
+    private static final int MAX_SELECTION = 7;
 
     private UserProfile currentUser;
     private HashMap<String, BankAccount> allAccounts;
+    private HashMap<String, UserProfile> allUsers;
     private Scanner keyboardInput;
 
-    public MainMenu(UserProfile user) {
+    public MainMenu(UserProfile user, HashMap<String, UserProfile> allUsers) {
         this.currentUser = user;
+        this.allUsers = allUsers;
         this.allAccounts = user.getAccounts();
         this.keyboardInput = new Scanner(System.in);
     }
@@ -28,29 +29,9 @@ public class MainMenu {
         System.out.println("2. Create an additional account");
         System.out.println("3. Close an existing account");
         System.out.println("4. Transfer money from one account to another");
-        System.out.println("5. Exit");
-    }
-
-    public int getUserSelection(int max) {
-        int selection = -1;
-
-        while (selection < 1 || selection > max) {
-            System.out.print("Please make a selection: ");
-
-            if (keyboardInput.hasNextInt()) {
-                selection = keyboardInput.nextInt();
-
-                if (selection < 1 || selection > max) {
-                    System.out.println("This input is invalid. Please select a number from 1-" + max);
-                }
-            } else {
-
-                keyboardInput.next();
-                System.out.println("This input is invalid. Please select a number from 1-" + max);
-            }
-        }
-
-        return selection;
+        System.out.println("5. Transfer money to another user in the system");
+        System.out.println("6. Apply for a loan");
+        System.out.println("7. Exit");
     }
 
     public HashMap<String, BankAccount> getAccounts() {
@@ -71,17 +52,19 @@ public class MainMenu {
             case 4:
                 transferBetweenAccounts();
                 break;
+            case 5:
+                transferToAnotherUser();
+                break;
+            case 6:
+                applyForLoan();
+                break;
             default:
                 break;
         }
     }
 
     public void selectAccount() {
-        System.out.println("Your accounts:");
-        for (Map.Entry<String, BankAccount> entry : allAccounts.entrySet()) {
-            System.out.println("- " + entry.getKey() + " (" + entry.getValue().getAccountType() + ")");
-        }
-        
+        displayAccounts();
         System.out.print("Please enter the name of the account you want to select: ");
         String accountName = keyboardInput.next();
 
@@ -92,33 +75,25 @@ public class MainMenu {
 
         BankAccount selectedAccount = allAccounts.get(accountName);
 
-        System.out.print("Please enter the pin for " + accountName+ ": ");
-        String enteredPin = keyboardInput.next();
-        if(selectedAccount.verifyPin(enteredPin)==false){
+        System.out.print("Please enter the pin for " + accountName + ": ");
+        if (!selectedAccount.verifyPin(keyboardInput.next())) {
             System.out.println("Incorrect PIN. Access denied.");
             return;
         }
-        
-        AccountAdministrationMenu adminMenu = new AccountAdministrationMenu(currentUser, accountName, selectedAccount, keyboardInput);
-        adminMenu.run();
+
+        new AccountAdministrationMenu(currentUser, accountName, selectedAccount, keyboardInput).run();
     }
 
-    private String promptToCreatePinNumber() {
-        System.out.print("Enter a 6 digit pin number for your account: ");
-        String pin = keyboardInput.next();
-
-        while (pin.length() != 6 || !pin.matches("\\d{6}")) {
-            System.out.print("Pin number must have 6 numerical digits. Enter a valid pin number: ");
-            pin = keyboardInput.next();
+    private void displayAccounts() {
+        System.out.println("Your accounts:");
+        for (Map.Entry<String, BankAccount> entry : allAccounts.entrySet()) {
+            System.out.println("- " + entry.getKey() + " (" + entry.getValue().getAccountType() + ")");
         }
-        return pin;
     }
 
     private boolean promptAndValidateBirthday() {
         System.out.print("Please enter your date of birth (MM/DD/YYYY): ");
-        String dob = keyboardInput.next();
-
-        if (!dob.equals(currentUser.getDob())) {
+        if (!keyboardInput.next().equals(currentUser.getDob())) {
             System.out.print("Date of birth does not match our records. ");
             return false;
         }
@@ -126,12 +101,7 @@ public class MainMenu {
     }
 
     public void createAdditionalAccount() {
-        System.out.print("Please enter your full name: ");
-        String fullName = keyboardInput.nextLine();
-        if (fullName.trim().isEmpty()) {
-            fullName = keyboardInput.nextLine();
-        }
-
+        getFullName();
         if (!promptAndValidateBirthday()) {
             System.out.println("Account creation failed.");
             return;
@@ -139,26 +109,36 @@ public class MainMenu {
 
         System.out.print("Enter a unique name for your new account: ");
         String accountName = keyboardInput.next();
-
         while (allAccounts.containsKey(accountName)) {
             System.out.print(accountName + " already exists. Enter a unique name for your new account: ");
             accountName = keyboardInput.next();
         }
 
-        System.out.print("Enter the account type (savings, checking, or credit): ");
-        String accountType = keyboardInput.next().toLowerCase();
-
-        while (!accountType.equals("savings")
-                && !accountType.equals("checking")
-                && !accountType.equals("credit")) {
-            System.out.print("Invalid account type. Please enter savings, checking, or credit: ");
-            accountType = keyboardInput.next().toLowerCase();
-        }
-
-        String pin = promptToCreatePinNumber();
+        String accountType = getAccountType();
+        String pin = InputValidator.getValidPin(keyboardInput, "Enter a 6 digit pin number for your account: ");
         allAccounts.put(accountName, new BankAccount(accountType, pin));
 
         System.out.println("Successfully created new " + accountType + " account with name: " + accountName);
+    }
+
+    private String getFullName() {
+        System.out.print("Please enter your full name: ");
+        String fullName = keyboardInput.nextLine();
+        while (fullName.trim().isEmpty()) {
+            System.out.print("Full name cannot be empty. Please enter your full name: ");
+            fullName = keyboardInput.nextLine();
+        }
+        return fullName;
+    }
+
+    private String getAccountType() {
+        System.out.print("Enter the account type (savings, checking, or credit): ");
+        String type = keyboardInput.next().toLowerCase();
+        while (!type.equals("savings") && !type.equals("checking") && !type.equals("credit")) {
+            System.out.print("Invalid account type. Please enter savings, checking, or credit: ");
+            type = keyboardInput.next().toLowerCase();
+        }
+        return type;
     }
 
     public void closeExistingAccount() {
@@ -186,32 +166,111 @@ public class MainMenu {
 
     public void transferBetweenAccounts() {
         System.out.print("Enter name of the account you are pulling money from: ");
-        String sourceAccountName = keyboardInput.next();
-
-        if (!allAccounts.containsKey(sourceAccountName)) {
-            System.out.println("Source account does not exist.");
-            return;
-        }
+        BankAccount source = validateAccount(allAccounts, keyboardInput.next(), "Source account");
+        if (source == null) return;
 
         System.out.print("Enter the name of the account you are depositing money into: ");
-        String destinationAccountName = keyboardInput.next();
+        BankAccount dest = validateAccount(allAccounts, keyboardInput.next(), "Destination account");
+        if (dest != null) executeTransfer(source, dest);
+    }
 
-        if (!allAccounts.containsKey(destinationAccountName)) {
-            System.out.println("Destination account does not exist.");
-            return;
-        }
-
+    private void executeTransfer(BankAccount source, BankAccount dest) {
         System.out.print("Enter the amount to transfer: ");
         double amount = keyboardInput.nextDouble();
 
         try {
-            allAccounts.get(sourceAccountName).withdraw(amount);
-            allAccounts.get(destinationAccountName).deposit(amount);
+            source.withdraw(amount);
+            dest.deposit(amount);
             System.out.println("Transfer successful.");
         } catch (IllegalArgumentException e) {
             System.out
                     .println("Transfer failed. Make sure the amount is valid and the source account has enough funds.");
         }
+    }
+
+    private BankAccount validateAccount(HashMap<String, BankAccount> accounts, String accountName, String type) {
+        if (!accounts.containsKey(accountName)) {
+            System.out.println(type + " does not exist.");
+            return null;
+        }
+        BankAccount account = accounts.get(accountName);
+        if (account.isFrozen()) {
+            System.out.println(type + " is frozen. Transfer failed.");
+            return null;
+        }
+        return account;
+    }
+
+    public void showAllUsersInSystem() {
+        System.out.println("Existing users in the system:");
+        for (Map.Entry<String, UserProfile> entry : allUsers.entrySet()) {
+            if (!entry.getKey().equals(currentUser.getUsername())) {
+                System.out.println("- " + entry.getKey());
+            }
+        }
+    }
+
+    public void transferToAnotherUser() {
+        showAllUsersInSystem();
+        keyboardInput.nextLine(); // consume leftover newline
+
+        System.out.print("Enter the username of the user you would like to transfer to: ");
+        String targetUsername = keyboardInput.nextLine();
+
+        if (!allUsers.containsKey(targetUsername)) {
+            System.out.println(targetUsername + " does not exist in our system. Transfer failed.");
+            return;
+        }
+
+        BankAccount dest = allUsers.get(targetUsername).getAccounts().get("primary");
+        if (dest.isFrozen()) {
+            System.out.println("Destination account is frozen. Transfer failed.");
+            return;
+        }
+
+        System.out.print("Enter name of the account you are pulling money from: ");
+        BankAccount source = validateAccount(allAccounts, keyboardInput.next(), "Source account");
+        if (source != null) executeTransfer(source, dest);
+    }
+
+    public void applyForLoan() {
+        keyboardInput.nextLine(); // consume leftover newline
+        System.out.println("Loan Application");
+        getFullName();
+
+        if (!promptAndValidateBirthday()) {
+            System.out.println("Loan application failed.");
+            return;
+        }
+
+        double income = InputValidator.getValidDouble(keyboardInput, "Please enter your annual income: ", "Income");
+        double loanAmt = InputValidator.getValidDouble(keyboardInput, "Please enter the loan amount requested: ",
+                "Loan amount");
+        int duration = InputValidator.getValidInt(keyboardInput, "Please enter the duration of the loan in months: ",
+                "Loan duration");
+
+        System.out.println("Loan application submitted successfully.");
+        String loanDecision = LoanService.evaluateLoanDecision(currentUser, income, loanAmt, duration);
+        System.out.println(loanDecision);
+
+        if (loanDecision.equals("Loan Approved!")) {
+            chooseAccountToDepositLoan(loanAmt);
+        }
+    }
+
+    public void chooseAccountToDepositLoan(double loanAmount) {
+        System.out.println("Choose an account to deposit your approved loan into:");
+        displayAccounts();
+
+        System.out.print("Please enter the name of the account: ");
+        String accountSelection = keyboardInput.next();
+        while (!allAccounts.containsKey(accountSelection)) {
+            System.out.println("Invalid account selection. Please choose from your existing accounts");
+            System.out.print("Please enter the name of the account: ");
+            accountSelection = keyboardInput.next();
+        }
+        allAccounts.get(accountSelection).deposit(loanAmount);
+        System.out.println(String.format("Successfully deposited loan of $%.2f to %s.", loanAmount, accountSelection));
     }
 
     public Set<String> getAllAccountNames() {
@@ -222,7 +281,7 @@ public class MainMenu {
         int selection = -1;
         while (selection != EXIT_SELECTION) {
             displayOptions();
-            selection = getUserSelection(MAX_SELECTION);
+            selection = InputValidator.getUserSelection(keyboardInput, MAX_SELECTION);
             processInput(selection);
         }
     }

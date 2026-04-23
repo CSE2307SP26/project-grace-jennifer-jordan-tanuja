@@ -15,7 +15,7 @@ public class AccountAdministrationMenu {
         this.account = account;
         this.keyboardInput = keyboardInput;
     }
-    
+
     public void displayOptions() {
         System.out.println("Currently in account " + accountName);
         System.out.println("What do you wish to do today?");
@@ -25,28 +25,6 @@ public class AccountAdministrationMenu {
         System.out.println("4. View transaction history");
         System.out.println("5. Change pin number for this account");
         System.out.println("6. Exit");
-    }
-
-    public int getUserSelection(int max) {
-        int selection = -1;
-
-        while (selection < 1 || selection > max) {
-            System.out.print("Please make a selection: ");
-
-            if (keyboardInput.hasNextInt()) {
-                selection = keyboardInput.nextInt();
-
-                if (selection < 1 || selection > max) {
-                    System.out.println("This input is invalid. Please select a number from 1-" + max);
-                }
-            } else {
-
-                keyboardInput.next();
-                System.out.println("This input is invalid. Please select a number from 1-" + max);
-            }
-        }
-
-        return selection;
     }
 
     public void processInput(int selection) {
@@ -83,6 +61,10 @@ public class AccountAdministrationMenu {
     }
 
     public void performWithdraw() {
+        if (account.isFrozen()) {
+            System.out.println("Account is frozen. Withdrawal failed.");
+            return;
+        }
         double withdrawAmount = -1;
         while (withdrawAmount < 0) {
             System.out.print("How much would you like to withdraw: ");
@@ -115,15 +97,9 @@ public class AccountAdministrationMenu {
             return;
         }
 
-        System.out.print("Enter a 6 digit pin number for your account: ");
-        String pin = keyboardInput.next();
-
-        while (pin.length() != 6 || !pin.matches("\\d{6}")) {
-            System.out.print("Pin number must have 6 numerical digits. Enter a valid pin number: ");
-            pin = keyboardInput.next();
-        }
+        String pin = InputValidator.getValidPin(keyboardInput, "Enter a 6 digit pin number for your account: ");
         account.changePin(pin);
-        
+
         System.out.println("Successfully changed pin number for account " + accountName + ".");
     }
 
@@ -131,7 +107,7 @@ public class AccountAdministrationMenu {
         int selection = -1;
         while (selection != 6) {
             displayOptions();
-            selection = getUserSelection(6);
+            selection = InputValidator.getUserSelection(keyboardInput, 6);
             processInput(selection);
         }
     }

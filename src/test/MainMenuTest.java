@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import org.junit.After;
@@ -28,8 +29,13 @@ public class MainMenuTest {
   }
 
   private MainMenu createMenu() {
+    HashMap<String, UserProfile> allUsers = new HashMap<>();
     UserProfile user = new UserProfile("testUser", "testPass", "test@email.com", "01/01/1990", "000000");
-    return new MainMenu(user);
+    UserProfile user2 = new UserProfile("testUser2", "testPass", "test@email.com", "01/01/1990", "000000");
+    allUsers.put("testUser", user);
+    allUsers.put("testUser2", user2);
+
+    return new MainMenu(user, allUsers);
   }
 
   @Test
@@ -260,6 +266,22 @@ public class MainMenuTest {
   }
 
   @Test
+  public void testTransferMoneyToAnotherUserSuccessfully() {
+    String input = "\ntestUser2\nprimary\n50\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+
+    menu.getAccounts().get("primary").deposit(100);
+    menu.transferToAnotherUser();
+
+    assertTrue(output.toString().contains("Transfer successful"));
+  }
+
+  @Test
   public void testCorrectPinOpensAccountMenu() {
     String input = "primary\n000000\n6\n";
     System.setIn(new ByteArrayInputStream(input.getBytes()));
@@ -283,4 +305,163 @@ public class MainMenuTest {
     assertTrue(output.toString().contains("Incorrect PIN. Access denied."));
   }
 
+  // apply for loan tests
+  @Test
+  public void testApplyForLoanSuccessfully() {
+    String input = "\nJohn Doe\n01/01/1990\n50000\n10000\n36\nprimary\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+    menu.applyForLoan();
+
+    String printed = output.toString();
+    assertTrue(printed.contains("Loan application submitted successfully."));
+    assertTrue(printed.contains("Loan Approved!"));
+    assertTrue(printed.contains("Successfully deposited loan of $10000.00 to primary."));
+    assertEquals(10000.0, menu.getAccounts().get("primary").getBalance(), 0.01);
+  }
+
+  @Test
+  public void testApplyForLoanFailsDobMismatch() {
+    String input = "\nJohn Doe\n12/31/1999\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+    menu.applyForLoan();
+
+    String printed = output.toString();
+    assertTrue(printed.contains("Date of birth does not match our records."));
+    assertTrue(printed.contains("Loan application failed."));
+  }
+
+  @Test
+  public void testApplyForLoanInvalidIncomeThenValid() {
+    String input = "\nJohn Doe\n01/01/1990\nabc\n50000\n10000\n36\nprimary\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+    menu.applyForLoan();
+
+    String printed = output.toString();
+    assertTrue(printed.contains("Invalid input. Please enter a valid number for income."));
+    assertTrue(printed.contains("Loan application submitted successfully."));
+    assertTrue(printed.contains("Loan Approved!"));
+    assertTrue(printed.contains("Successfully deposited loan of $10000.00 to primary."));
+    assertEquals(10000.0, menu.getAccounts().get("primary").getBalance(), 0.01);
+  }
+
+  @Test
+  public void testApplyForLoanInvalidLoanAmountThenValid() {
+    String input = "\nJohn Doe\n01/01/1990\n50000\nabc\n10000\n36\nprimary\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+    menu.applyForLoan();
+
+    String printed = output.toString();
+    assertTrue(printed.contains("Invalid input. Please enter a valid number for loan amount."));
+    assertTrue(printed.contains("Loan application submitted successfully."));
+    assertTrue(printed.contains("Loan Approved!"));
+    assertTrue(printed.contains("Successfully deposited loan of $10000.00 to primary."));
+    assertEquals(10000.0, menu.getAccounts().get("primary").getBalance(), 0.01);
+  }
+
+  @Test
+  public void testApplyForLoanInvalidDurationThenValid() {
+    String input = "\nJohn Doe\n01/01/1990\n50000\n10000\nabc\n36\nprimary\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+    menu.applyForLoan();
+
+    String printed = output.toString();
+    assertTrue(printed.contains("Invalid input. Please enter a valid whole number for loan duration."));
+    assertTrue(printed.contains("Loan application submitted successfully."));
+    assertTrue(printed.contains("Loan Approved!"));
+    assertTrue(printed.contains("Successfully deposited loan of $10000.00 to primary."));
+    assertEquals(10000.0, menu.getAccounts().get("primary").getBalance(), 0.01);
+  }
+
+  @Test
+  public void testApplyForLoanDeniedForLargeLoanComparedToIncome() {
+    String input = "\nJohn Doe\n01/01/1990\n50000\n500000\n60\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+    menu.applyForLoan();
+
+    String printed = output.toString();
+    assertTrue(printed.contains("Loan application submitted successfully."));
+    assertTrue(printed.contains("Loan Denied: Loan amount is too high compared to your income."));
+  }
+
+  @Test
+  public void testApplyForLoanDeniedForHighMonthlyPayment() {
+    String input = "\nJohn Doe\n01/01/1990\n100000\n500000\n60\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+    menu.applyForLoan();
+
+    String printed = output.toString();
+    assertTrue(printed.contains("Loan application submitted successfully."));
+    assertTrue(printed.contains("Loan Denied: Monthly payment would be too high based on your income."));
+  }
+
+  @Test
+  public void testLoanWasDepositedToSelectedAccount() {
+    String input = "\nJohn Doe\n01/01/1990\n50000\n10000\n36\nprimary\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+
+    menu.applyForLoan();
+
+    String printed = output.toString();
+    assertTrue(printed.contains("Loan application submitted successfully."));
+    assertTrue(printed.contains("Loan Approved!"));
+    assertTrue(printed.contains("Successfully deposited loan of $10000.00 to primary"));
+    assertEquals(10000.0, menu.getAccounts().get("primary").getBalance(), 0.01);
+  }
+
+  @Test
+  public void testTransferFailsWhenSourceAccountFrozen() {
+    String input = "John Doe\n01/01/1990\nsavings\nsavings\n000000\nprimary\nsavings\n40\n";
+    System.setIn(new ByteArrayInputStream(input.getBytes()));
+
+    ByteArrayOutputStream output = new ByteArrayOutputStream();
+    System.setOut(new PrintStream(output));
+
+    MainMenu menu = createMenu();
+    menu.createAdditionalAccount();
+    menu.getAccounts().get("primary").deposit(100);
+    menu.getAccounts().get("primary").freeze();
+    menu.transferBetweenAccounts();
+
+    assertTrue(output.toString().contains("Source account is frozen. Transfer failed."));
+  }
 }

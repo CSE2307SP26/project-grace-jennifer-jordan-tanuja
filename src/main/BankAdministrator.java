@@ -4,6 +4,22 @@ import java.util.HashMap;
 
 public class BankAdministrator {
 
+    private String employeeId;
+    private String password;
+
+    public BankAdministrator(String employeeId, String password) {
+        this.employeeId = employeeId;
+        this.password = password;
+    }
+
+    public String getEmployeeId() {
+        return employeeId;
+    }
+
+    public boolean checkPassword(String password) {
+        return this.password.equals(password);
+    }
+
     public void collectFees(BankAccount account, double fee) {
         if (fee < 0) {
             throw new IllegalArgumentException();
@@ -38,6 +54,20 @@ public class BankAdministrator {
                 }
             }
         }
+    }
+
+    public void freezeAccount(BankAccount account) {
+        if (account == null) {
+            throw new IllegalArgumentException();
+        }
+        account.freeze();
+    }
+
+    public void unfreezeAccount(BankAccount account) {
+        if (account == null) {
+            throw new IllegalArgumentException();
+        }
+        account.unfreeze();
     }
 
 }
