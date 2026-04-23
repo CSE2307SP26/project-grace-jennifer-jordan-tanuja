@@ -166,46 +166,39 @@ public class MainMenu {
 
     public void transferBetweenAccounts() {
         System.out.print("Enter name of the account you are pulling money from: ");
-        String sourceAccountName = keyboardInput.next();
-
-        if (!allAccounts.containsKey(sourceAccountName)) {
-            System.out.println("Source account does not exist.");
-            return;
-        }
+        BankAccount source = validateAccount(allAccounts, keyboardInput.next(), "Source account");
+        if (source == null) return;
 
         System.out.print("Enter the name of the account you are depositing money into: ");
-        String destinationAccountName = keyboardInput.next();
-
-        if (!allAccounts.containsKey(destinationAccountName)) {
-            System.out.println("Destination account does not exist.");
-            return;
-        }
-
-        if (allAccounts.get(sourceAccountName).isFrozen()) {
-            System.out.println("Source account is frozen. Transfer failed.");
-            return;
-        }
-
-        if (allAccounts.get(destinationAccountName).isFrozen()) {
-            System.out.println("Destination account is frozen. Transfer failed.");
-            return;
-        }
-
-        executeTransfer(sourceAccountName, destinationAccountName);
+        BankAccount dest = validateAccount(allAccounts, keyboardInput.next(), "Destination account");
+        if (dest != null) executeTransfer(source, dest);
     }
 
-    private void executeTransfer(String source, String dest) {
+    private void executeTransfer(BankAccount source, BankAccount dest) {
         System.out.print("Enter the amount to transfer: ");
         double amount = keyboardInput.nextDouble();
 
         try {
-            allAccounts.get(source).withdraw(amount);
-            allAccounts.get(dest).deposit(amount);
+            source.withdraw(amount);
+            dest.deposit(amount);
             System.out.println("Transfer successful.");
         } catch (IllegalArgumentException e) {
             System.out
                     .println("Transfer failed. Make sure the amount is valid and the source account has enough funds.");
         }
+    }
+
+    private BankAccount validateAccount(HashMap<String, BankAccount> accounts, String accountName, String type) {
+        if (!accounts.containsKey(accountName)) {
+            System.out.println(type + " does not exist.");
+            return null;
+        }
+        BankAccount account = accounts.get(accountName);
+        if (account.isFrozen()) {
+            System.out.println(type + " is frozen. Transfer failed.");
+            return null;
+        }
+        return account;
     }
 
     public void showAllUsersInSystem() {
@@ -229,36 +222,15 @@ public class MainMenu {
             return;
         }
 
-        BankAccount targetPrimary = allUsers.get(targetUsername).getAccounts().get("primary");
-        if (targetPrimary.isFrozen()) {
+        BankAccount dest = allUsers.get(targetUsername).getAccounts().get("primary");
+        if (dest.isFrozen()) {
             System.out.println("Destination account is frozen. Transfer failed.");
             return;
         }
 
         System.out.print("Enter name of the account you are pulling money from: ");
-        String sourceAccountName = keyboardInput.next();
-
-        if (!allAccounts.containsKey(sourceAccountName)) {
-            System.out.println("Source account does not exist. Transfer failed.");
-            return;
-        }
-
-        if (allAccounts.get(sourceAccountName).isFrozen()) {
-            System.out.println("Source account is frozen. Transfer failed.");
-            return;
-        }
-
-        System.out.print("Enter the amount to transfer: ");
-        double amount = keyboardInput.nextDouble();
-
-        try {
-            allAccounts.get(sourceAccountName).withdraw(amount);
-            targetPrimary.deposit(amount);
-            System.out.println("Transfer successful.");
-        } catch (IllegalArgumentException e) {
-            System.out
-                    .println("Transfer failed. Make sure the amount is valid and the source account has enough funds.");
-        }
+        BankAccount source = validateAccount(allAccounts, keyboardInput.next(), "Source account");
+        if (source != null) executeTransfer(source, dest);
     }
 
     public void applyForLoan() {

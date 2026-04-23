@@ -33,7 +33,7 @@ public class BankAdministratorMenuTest {
         users.put("alice", new UserProfile("alice", "pass", "123456"));
         users.put("bob", new UserProfile("bob", "pass", "123456"));
 
-        String input = "4\n6\n"; // 4 is view all customers, 5 is exit
+        String input = "4\n7\n"; // 4 is view all customers, 7 is exit
         System.setIn(new ByteArrayInputStream(input.getBytes()));
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         System.setOut(new PrintStream(output));
